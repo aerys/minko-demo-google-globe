@@ -1,12 +1,10 @@
 package
 {
-	import aerys.minko.effect.basic.BasicEffect;
 	import aerys.minko.scene.graph.Loader3D;
 	import aerys.minko.scene.graph.Model;
 	import aerys.minko.scene.graph.camera.ArcBallCamera;
 	import aerys.minko.scene.graph.group.EffectGroup;
 	import aerys.minko.scene.graph.group.Group;
-	import aerys.minko.scene.graph.mesh.modifier.NormalMesh;
 	import aerys.minko.scene.graph.mesh.primitive.SphereMesh;
 	import aerys.minko.stage.Viewport;
 	import aerys.minko.type.math.Vector4;
@@ -23,9 +21,10 @@ package
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.ByteArray;
 	
-	import render.AtmosphereEffect;
-	import render.ColorEffect;
-	import render.EarthEffect;
+	import render.AtmospherePass;
+	import render.ColorPass;
+	import render.EarthPass;
+	import render.SinglePassEffect;
 	
 	[SWF(width=800,height=600)]
 	
@@ -81,17 +80,17 @@ package
 										  Loader3D.loadAsset(ASSET_WORLD_DIFFUSE)[0]);
 				
 			earth.transform.appendUniformScale(200.);
-			earth.effects[0] = new EarthEffect();
+			earth.effects[0] = new SinglePassEffect(new EarthPass());
 			_scene.addChild(earth);
 		
-			_cloud.effects[0] = new ColorEffect();
+			_cloud.effects[0] = new SinglePassEffect(new ColorPass());
 			
 			loadSearchData();
 			
 			var atm : Model = new Model(sphere);
 			
 			atm.transform.appendUniformScale(233.);
-			atm.effects[0] = new AtmosphereEffect();
+			atm.effects[0] = new SinglePassEffect(new AtmospherePass());
 			_scene.addChild(atm);
 			
 //			new FileReference().save(encodeSearchData(), "search.qark");
