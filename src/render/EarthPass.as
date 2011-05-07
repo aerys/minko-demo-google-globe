@@ -8,6 +8,7 @@ package render
 	import aerys.minko.render.state.Blending;
 	import aerys.minko.render.state.CompareMode;
 	import aerys.minko.render.state.RenderState;
+	import aerys.minko.render.state.TriangleCulling;
 	import aerys.minko.type.math.ConstVector4;
 	import aerys.minko.type.math.Matrix4x4;
 	import aerys.minko.type.math.Vector4;
@@ -45,6 +46,7 @@ package render
 			state.shader = DEFAULT_SHADER;
 			state.blending = Blending.NORMAL;
 			state.depthMask = DEPTH_TEST;
+			state.triangleCulling = TriangleCulling.BACK;
 			
 			state.setTextureAt(0, diffuse);
 		
