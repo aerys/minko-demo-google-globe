@@ -1,0 +1,13 @@
+<agal name="ColorShader" packageName="render">
+  <description/>
+  <vertexShader>// vc0-3 = world * view * projection matrix// va0.xyz = vertex position// va1.xyz = vertex colorm44 op, va0, vc0mov v0, va1</vertexShader>
+  <fragmentShader>// fc0.x = 1.// v0.xyz = vertex colormov ft0, v0.xyzmov ft0.w, fc0.xmov oc, ft0</fragmentShader>
+  <component>VertexComponent.XYZ</component>
+  <component>VertexComponent.UV</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+</agal>

@@ -1,0 +1,13 @@
+<agal name="EarthShader" packageName="render">
+  <description/>
+  <vertexShader>// vc0-3 = world * view * projection matrix// va0.xyz = vertex position// va1.xy = texture coordinatesm44 op, va0, vc0mov v0, va1mov v1, va0</vertexShader>
+  <fragmentShader>// v0.xy = texture coordinates// v1.xyz = vertex normal// fs0 = diffuse map// fc0.xyz = (0.0, 0.0, 1.0)// fc1.xyz = (1.05, 3.0, 2.)// fc2.xyz = light colortex ft0, v0, fs0 &lt;2d,repeat,linear&gt;mul ft1, v1, fc1.zdp3 ft1, ft1, fc0sub ft1, fc1.x, ft1pow ft1, ft1, fc1.ymul ft1, fc2.xyz, ft1add ft1.xyz, ft0.xyz, ft1.xyzmov ft1.w, ft0.wmov oc, ft1</fragmentShader>
+  <component>VertexComponent.XYZ</component>
+  <component>VertexComponent.UV</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+  <component>null</component>
+</agal>
