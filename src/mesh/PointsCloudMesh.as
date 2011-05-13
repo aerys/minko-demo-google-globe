@@ -1,4 +1,4 @@
-package
+package mesh
 {
 	import aerys.minko.scene.graph.mesh.Mesh;
 	import aerys.minko.scene.visitor.ISceneVisitor;
@@ -25,12 +25,14 @@ package
 			.5, -.5, .5, -.5, -.5, .5, -.5, -.5, -.5, .5, -.5, -.5
 		]);
 		
-		private var _numPoints	: int =	 0;
+		private var _numPoints	: uint =	 0;
+		
+		public function get numPoints() : uint	{ return _numPoints; }
 		
 		public function PointsCloudMesh()
 		{
-			super(new VertexStreamList(new VertexStream(new Vector.<Number>(), FORMAT, true)),
-				  new IndexStream(null, 0, true));
+			super(new VertexStreamList(new VertexStream(new Vector.<Number>(), FORMAT)),
+				  new IndexStream(null, 0));
 		}
 		
 		public function addPoint(lat	: Number,

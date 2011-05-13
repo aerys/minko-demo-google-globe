@@ -1,11 +1,7 @@
 package
 {
-	import aerys.minko.scene.graph.Loader3D;
-	import aerys.minko.scene.graph.Model;
 	import aerys.minko.scene.graph.camera.ArcBallCamera;
-	import aerys.minko.scene.graph.group.EffectGroup;
 	import aerys.minko.scene.graph.group.Group;
-	import aerys.minko.scene.graph.mesh.primitive.SphereMesh;
 	import aerys.minko.stage.Viewport;
 	import aerys.minko.type.math.Vector4;
 	import aerys.monitor.Monitor;
@@ -21,12 +17,7 @@ package
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.ByteArray;
 	
-	import render.AtmospherePass;
-	import render.ColorPass;
-	import render.EarthPass;
-	import render.SinglePassEffect;
-	
-	[SWF(width=800,height=600)]
+//	[SWF(width=800,height=600)]
 	
 	public class Main extends Sprite
 	{
@@ -38,6 +29,8 @@ package
 		private static const ASSET_SEARCH_QARK		: Class;
 		/*[Embed("../assets/population2000.json",mimeType="application/octet-stream")]
 		private static const ASSET_POPULATION_JSON	: Class;*/
+		[Embed("../assets/population2000.qark",mimeType="application/octet-stream")]
+		private static const ASSET_POPULATION_QARK	: Class;
 		
 		private static const MOUSE_SENSITIVITY		: Number	= .0006;
 		private static const SPEED_SCALE			: Number	= .9;
@@ -50,11 +43,13 @@ package
 																   0x7f3f98, 0xf26522, 0x2bb673, 0xd7df23, 0xe6b23a,
 																   0x7ed3f7];
 		
-		private var _viewport		: Viewport			= null;
+		private var _viewport		: Viewport			= new Viewport(0., 0., 2);
 		private var _camera			: ArcBallCamera		= new ArcBallCamera();
-		private var _cloud			: EffectGroup		= new EffectGroup();
+		private var _globe			: Globe				= new Globe();
 		private var _scene			: Group				= new Group(_camera,
-																	_cloud);
+																	_globe,
+																	new Earth(),
+																	new Atmosphere());
 		
 		private var _cursor			: Point				= new Point();
 		private var _speed			: Vector4			= new Vector4();
@@ -72,41 +67,25 @@ package
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, initialize);
 			
-			_viewport = Viewport.setupOnStage(stage, 8);
-			_viewport.defaultEffect = null;
-						
-			var sphere : SphereMesh = new SphereMesh(40);
-			var earth : Model = new Model(sphere,
-										  Loader3D.loadAsset(ASSET_WORLD_DIFFUSE)[0]);
-				
-			earth.transform.appendUniformScale(200.);
-			earth.effects[0] = new SinglePassEffect(new EarthPass());
-			_scene.addChild(earth);
-		
-			_cloud.effects[0] = new SinglePassEffect(new ColorPass());
-			
-			loadSearchData();
-			
-			var atm : Model = new Model(sphere);
-			
-			atm.transform.appendUniformScale(233.);
-			atm.effects[0] = new SinglePassEffect(new AtmospherePass());
-			_scene.addChild(atm);
-			
-//			new FileReference().save(encodeSearchData(), "search.qark");
-
-			_camera.distance = MIN_ZOOM;
-			//_camera.farClipping = 2000.;
-			//new EazeTween(_camera).from(1, {distance: 2000});
-			new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2.,
-												   x: -.5})
-										   .onComplete(cameraTweenComplete);
-			
-			//initializeMonitor();
+//			initializeMonitor();
 			initializeUI();
+			initializeScene();
 			
 			stage.frameRate = 60.;
 			stage.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+		}
+		
+		private function initializeScene() : void
+		{
+			_viewport.defaultEffect = null;
+			addChild(_viewport);
+			
+			loadPopulationData();
+			//loadSearchData();
+			
+			_camera.distance = MIN_ZOOM;
+			new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})
+										   .onComplete(cameraTweenComplete);
 		}
 		
 		private function cameraTweenComplete() : void
@@ -135,13 +114,28 @@ package
 			addChild(textField);
 		}
 		
+		private function loadPopulationData() : void
+		{
+			var data		: Array	= Qark.decode(new ASSET_POPULATION_QARK());
+			var numPoints 	: int 	= data.length;
+			
+			for (var i : int = 0; i < numPoints; ++i)
+			{				
+				_globe.addPoint(
+					data[i][0],
+					data[i][1],
+					data[i][2] * 130,
+					Color.hsvToRgb(.6 - (data[i][2] * 5.), 1., 1.)
+				);
+			}
+		}
+		
 		private function loadSearchData() : void
 		{
-			var data		: Array				= Qark.decode(new ASSET_SEARCH_QARK());
-			var points		: PointsCloudMesh	= new PointsCloudMesh();
-			var numPoints 	: int 				= data.length;
-			var j			: int				= 0;
-			
+			var data		: Array	= Qark.decode(new ASSET_SEARCH_QARK());
+			var numPoints 	: int 	= data.length;
+			var j			: int	= 0;
+
 			for (var i : int = 0; i < numPoints; ++i, j++)
 			{
 				var color : uint = COLORS[data[i][3]];
@@ -153,33 +147,39 @@ package
 												 + (Math.random() * 255);
 				}
 				
-				if (j >= MAX_POINTS_PER_MESH)
-				{
-					_cloud.addChild(points);
-					points = new PointsCloudMesh();
-					
-					j = 0;
-				}
-				
-				points.addPoint(
+				_globe.addPoint(
 					data[i][0],
 					data[i][1],
 					data[i][2] * 130,
 					color
 				);
 			}
+		}
+		
+		private function encodePopulationData(populationData : String) : ByteArray
+		{
+			var data 		: Array = populationData.match(/([\-0-9.]+)/g);
+			var numPoints 	: int 	= data.length / 3;
+			var j			: int	= 0;
+			var output		: Array	= new Array();
+
+			for (var i : int = 0; i < numPoints; ++i)
+			{
+				output.push([parseFloat(data[int(i * 3)]),
+							 parseFloat(data[int(i * 3 + 1)]),
+							 parseFloat(data[int(i * 3 + 2)])]);
+			}
 			
-			_cloud.addChild(points);
+			return Qark.encode(output);
 		}
 		
 		private function encodeSearchData(searchData : String) : ByteArray
 		{
 			var data 		: Array = searchData.match(/([\-0-9.]+)/g);
 			var numPoints 	: int 	= data.length / 4;
-			var j			: int	= 0;
 			var output		: Array	= new Array();
 
-			for (var i : int = 0; i < numPoints; ++i, j++)
+			for (var i : int = 0; i < numPoints; ++i)
 			{
 				output.push([parseFloat(data[int(i * 4)]),
 							 parseFloat(data[int(i * 4 + 1)]),

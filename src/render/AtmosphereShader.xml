@@ -1,13 +1,0 @@
-<agal name="AtmosphereShader" packageName="render">
-  <description/>
-  <vertexShader>// vc0-3 = world * view * projection matrix// va0.xyz = vertex position// va1.xy = texture coordinatesm44 op, va0, vc0//mov v0, va1//mov vt0, va1mov v0, va0</vertexShader>
-  <fragmentShader>// fc0.xyz = atmosphere color// fc1.xyz = (0.8, 12, 2.0)// fc2.xyz = (0.0, 0.0, 1.0)// v0.xyz = vertex normalmul ft0, v0, fc1.zdp3 ft0, ft0, fc2sub ft0, fc1.x, ft0pow ft0, ft0, fc1.ymul oc, fc0.xyzw, ft0</fragmentShader>
-  <component>VertexComponent.XYZ</component>
-  <component>null</component>
-  <component>null</component>
-  <component>null</component>
-  <component>null</component>
-  <component>null</component>
-  <component>null</component>
-  <component>null</component>
-</agal>
