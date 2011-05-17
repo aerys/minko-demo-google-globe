@@ -3,6 +3,7 @@ package render.shader
 	import aerys.minko.effect.IEffectPass;
 	import aerys.minko.render.shader.compiler.register.RegisterMask;
 	import aerys.minko.render.shader.node.IShaderNode;
+	import aerys.minko.render.shader.node.Component;
 	import aerys.minko.render.state.CompareMode;
 	import aerys.minko.render.state.RenderState;
 	import aerys.minko.render.state.TriangleCulling;
@@ -29,7 +30,7 @@ package render.shader
 			
 			return true;
 		}
-		
+	
 		override protected function getOutputPosition() : IShaderNode
 		{
 			return vertexClipspacePosition;
@@ -37,7 +38,7 @@ package render.shader
 		
 		override protected function getOutputColor() : IShaderNode
 		{
-			return combine(interpolate(vertexColor), RegisterMask.XYZ, 1., RegisterMask.W);
+			return combine(extract(interpolate(vertexColor), Component.RGB), 1.);
 		}
 	}
 }

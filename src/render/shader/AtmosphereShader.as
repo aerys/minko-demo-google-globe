@@ -43,7 +43,7 @@ package render.shader
 			state.blending = Blending.ALPHA;
 			state.depthMask = CompareMode.LESS;
 			state.triangleCulling = TriangleCulling.FRONT;
-			
+		
 			return true;
 		}
 		

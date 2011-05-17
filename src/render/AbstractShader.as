@@ -8,15 +8,16 @@ package render
 	import aerys.minko.render.shader.node.leaf.Sampler;
 	import aerys.minko.render.shader.node.leaf.TransformParameter;
 	import aerys.minko.render.shader.node.leaf.WorldParameter;
-	import aerys.minko.render.shader.node.operation.other.Texture;
-	import aerys.minko.render.shader.node.operation.scalar.Add;
-	import aerys.minko.render.shader.node.operation.scalar.Multiply;
-	import aerys.minko.render.shader.node.operation.scalar.Power;
-	import aerys.minko.render.shader.node.operation.scalar.Substract;
+	import aerys.minko.render.shader.node.operation.componentwise.double.Add;
+	import aerys.minko.render.shader.node.operation.componentwise.double.Multiply;
+	import aerys.minko.render.shader.node.operation.componentwise.double.Power;
+	import aerys.minko.render.shader.node.operation.componentwise.double.Substract;
 	import aerys.minko.render.shader.node.operation.vector.DotProduct3;
 	import aerys.minko.render.shader.node.operation.vector.DotProduct4;
 	import aerys.minko.render.shader.node.operation.vector.Multiply4x4;
+	import aerys.minko.render.shader.node.operation.vector.Texture;
 	import aerys.minko.render.shader.node.operation.virtual.Combine;
+	import aerys.minko.render.shader.node.operation.virtual.Extract;
 	import aerys.minko.render.shader.node.operation.virtual.Interpolate;
 	import aerys.minko.scene.visitor.data.CameraData;
 	import aerys.minko.scene.visitor.data.TransformData;
@@ -30,11 +31,41 @@ package render
 	{
 		use namespace minko;
 		
+		protected final function get vertexClipspacePosition() : IShaderNode
+		{
+			return multiply4x4(vertexPosition, localToScreenMatrix);
+		}
+		
+		protected final function get vertexPosition() : IShaderNode
+		{
+			return new Attribute(VertexComponent.XYZ);
+		}
+		
+		protected final function get vertexColor() : IShaderNode
+		{
+			return new Attribute(VertexComponent.RGB);
+		}
+		
+		protected final function get vertexUV() : IShaderNode
+		{
+			return new Attribute(VertexComponent.UV);
+		}
+		
+		protected final function get cameraLocalDirection() : IShaderNode
+		{
+			return new WorldParameter(3, CameraData, CameraData.LOCAL_DIRECTION);
+		}
+		
+		protected final function get localToScreenMatrix() : IShaderNode
+		{
+			return new TransformParameter(16, TransformData.LOCAL_TO_SCREEN);
+		}
+		
 		public function AbstractShader()
 		{
 			super(getOutputPosition(), getOutputColor());
 		}
-		
+				
 		protected function getOutputPosition() : IShaderNode
 		{
 			throw new Error();
@@ -51,11 +82,9 @@ package render
 		}
 		
 		protected final function combine(value1	: Object,
-									     mask1	: uint,
-									     value2	: Object,
-									     mask2	: uint) : IShaderNode
+									     value2	: Object) : IShaderNode
 		{
-			return new Combine(getShaderNode(value1), mask1, getShaderNode(value2), mask2);
+			return new Combine(getShaderNode(value1), getShaderNode(value2));
 		}
 		
 		protected final function sampleTexture(styleName : String, uv : Object) : Texture
@@ -106,34 +135,9 @@ package render
 			return new WorldParameter(size, key, field, index);
 		}
 		
-		protected final function get vertexClipspacePosition() : IShaderNode
+		protected final function extract(value : Object, subNode : uint) : IShaderNode
 		{
-			return multiply4x4(vertexPosition, localToScreenMatrix);
-		}
-		
-		protected final function get vertexPosition() : IShaderNode
-		{
-			return new Attribute(VertexComponent.XYZ);
-		}
-		
-		protected final function get vertexColor() : IShaderNode
-		{
-			return new Attribute(VertexComponent.RGB);
-		}
-		
-		protected final function get vertexUV() : IShaderNode
-		{
-			return new Attribute(VertexComponent.UV);
-		}
-		
-		protected final function get cameraLocalDirection() : IShaderNode
-		{
-			return new WorldParameter(3, CameraData, CameraData.LOCAL_DIRECTION);
-		}
-		
-		protected final function get localToScreenMatrix() : IShaderNode
-		{
-			return new TransformParameter(16, TransformData.LOCAL_TO_SCREEN);
+			return new Extract(getShaderNode(value), subNode);
 		}
 		
 		private function getShaderNode(value : Object) : IShaderNode
