@@ -1,11 +1,10 @@
-package
+package scene
 {
-	import aerys.minko.scene.graph.Loader3D;
-	import aerys.minko.scene.graph.Model;
-	import aerys.minko.scene.graph.mesh.primitive.SphereMesh;
+	import aerys.minko.scene.node.Loader3D;
+	import aerys.minko.scene.node.Model;
+	import aerys.minko.scene.node.mesh.primitive.SphereMesh;
 	
-	import render.SinglePassEffect;
-	import render.shader.EarthShader;
+	import effect.EarthEffect;
 	
 	public class Earth extends Model
 	{
@@ -19,7 +18,7 @@ package
 			super(new SphereMesh(40), Loader3D.loadAsset(ASSET_WORLD_DIFFUSE)[0]);
 			
 			transform.appendUniformScale(scale);
-			effects[0] = new SinglePassEffect(new EarthShader());
+			effects[0] = new EarthEffect();
 		}
 	}
 }

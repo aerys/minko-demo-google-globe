@@ -1,10 +1,10 @@
-package
+package scene
 {
-	import aerys.minko.scene.graph.Model;
-	import aerys.minko.scene.graph.mesh.primitive.SphereMesh;
+	import aerys.minko.scene.node.Model;
+	import aerys.minko.scene.node.mesh.primitive.SphereMesh;
 	
-	import render.SinglePassEffect;
-	import render.shader.AtmosphereShader;
+	import effect.SinglePassEffect;
+	import effect.AtmosphereEffect;
 	
 	public class Atmosphere extends Model
 	{
@@ -15,7 +15,7 @@ package
 			super(new SphereMesh(40));
 			
 			transform.appendUniformScale(DEFAULT_SCALE);
-			effects[0] = new SinglePassEffect(new AtmosphereShader());
+			effects[0] = new AtmosphereEffect();
 		}
 	}
 }

@@ -1,6 +1,6 @@
-package mesh
+package scene.mesh
 {
-	import aerys.minko.scene.graph.mesh.Mesh;
+	import aerys.minko.scene.node.mesh.Mesh;
 	import aerys.minko.scene.visitor.ISceneVisitor;
 	import aerys.minko.type.Transform3D;
 	import aerys.minko.type.math.ConstVector4;

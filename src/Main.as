@@ -1,8 +1,8 @@
 package
 {
-	import aerys.minko.scene.graph.camera.ArcBallCamera;
-	import aerys.minko.scene.graph.group.Group;
-	import aerys.minko.stage.Viewport;
+	import aerys.minko.render.Viewport;
+	import aerys.minko.scene.node.camera.ArcBallCamera;
+	import aerys.minko.scene.node.group.Group;
 	import aerys.minko.type.math.Vector4;
 	import aerys.monitor.Monitor;
 	import aerys.qark.Qark;
@@ -16,6 +16,9 @@ package
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.ByteArray;
+	import scene.Atmosphere;
+	import scene.Earth;
+	import scene.Globe;
 	
 //	[SWF(width=800,height=600)]
 	
@@ -54,6 +57,8 @@ package
 		private var _cursor			: Point				= new Point();
 		private var _speed			: Vector4			= new Vector4();
 		private var _initialized	: Boolean			= false;
+		
+		private var _text			: TextField			= new TextField();
 	
 		public function Main()
 		{
@@ -62,7 +67,7 @@ package
 			else
 				addEventListener(Event.ADDED_TO_STAGE, initialize);
 		}
-		
+	
 		private function initialize(event : Event = null) : void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, initialize);
@@ -104,14 +109,11 @@ package
 		
 		private function initializeUI() : void
 		{
-			var textField : TextField = new TextField();
-			
-			textField.htmlText = '<font size="20px">Google Search Volume by Language</font>';
-			textField.textColor = 0xffffffff;
-			textField.autoSize = TextFieldAutoSize.LEFT;
-			textField.x = 30.;
-			textField.y = 30.;
-			addChild(textField);
+			_text.textColor = 0xffffffff;
+			_text.autoSize = TextFieldAutoSize.LEFT;
+			_text.x = 30.;
+			_text.y = 30.;
+			addChild(_text);
 		}
 		
 		private function loadPopulationData() : void
@@ -119,13 +121,15 @@ package
 			var data		: Array	= Qark.decode(new ASSET_POPULATION_QARK());
 			var numPoints 	: int 	= data.length;
 			
+			_text.htmlText = '<font size="20px">World Population</font>';
+			
 			for (var i : int = 0; i < numPoints; ++i)
 			{				
 				_globe.addPoint(
 					data[i][0],
 					data[i][1],
 					data[i][2] * 130,
-					Color.hsvToRgb(.6 - (data[i][2] * 5.), 1., 1.)
+					ColorUtils.hsvToRgb(.6 - (data[i][2] * .5), 1., 1.)
 				);
 			}
 		}
@@ -136,6 +140,8 @@ package
 			var numPoints 	: int 	= data.length;
 			var j			: int	= 0;
 
+			_text.htmlText = '<font size="20px">Google Search Volume by Language</font>';
+			
 			for (var i : int = 0; i < numPoints; ++i, j++)
 			{
 				var color : uint = COLORS[data[i][3]];

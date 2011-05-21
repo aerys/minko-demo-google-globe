@@ -1,11 +1,9 @@
-package
+package scene
 {
-	import aerys.minko.scene.graph.group.EffectGroup;
+	import aerys.minko.render.effect.basic.BasicEffect;
+	import aerys.minko.scene.node.group.EffectGroup;
 	
-	import mesh.PointsCloudMesh;
-	
-	import render.SinglePassEffect;
-	import render.shader.ColorShader;
+	import scene.mesh.PointsCloudMesh;
 
 	public class Globe extends EffectGroup
 	{
@@ -16,7 +14,7 @@ package
 		
 		public function Globe()
 		{
-			effects[0] = new SinglePassEffect(new ColorShader());
+			effects[0] = new BasicEffect();
 		}
 		
 		public function addPoint(latitude	: Number,
