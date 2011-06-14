@@ -1,14 +1,12 @@
 package scene.mesh
 {
 	import aerys.minko.scene.node.mesh.Mesh;
-	import aerys.minko.scene.visitor.ISceneVisitor;
-	import aerys.minko.type.Transform3D;
 	import aerys.minko.type.math.ConstVector4;
+	import aerys.minko.type.math.Transform3D;
 	import aerys.minko.type.stream.IndexStream;
 	import aerys.minko.type.stream.VertexStream;
 	import aerys.minko.type.stream.VertexStreamList;
 	import aerys.minko.type.vertex.VertexIterator;
-	import aerys.minko.type.vertex.VertexReference;
 	import aerys.minko.type.vertex.format.VertexComponent;
 	import aerys.minko.type.vertex.format.VertexFormat;
 

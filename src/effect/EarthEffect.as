@@ -1,36 +1,54 @@
 package effect
 {
 	import aerys.minko.render.effect.basic.BasicStyle;
+	import aerys.minko.render.renderer.state.Blending;
+	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.shader.node.INode;
-	import aerys.minko.render.shader.node.operation.builtin.Texture;
+	import aerys.minko.render.shader.node.operation.builtin.Multiply4x4;
+	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
-	import aerys.minko.scene.visitor.data.TransformData;
-	import aerys.minko.type.math.ConstVector4;
 	
 	import flash.utils.Dictionary;
 	
+	[StyleParameter(name="basic diffuse map", type="texture")]
+	[StyleParameter(name="basic normal map", type="texture")]
 	
 	public class EarthEffect extends SinglePassEffect
 	{
-		override protected function getOutputPosition(style	: StyleStack, 
-													  local	: TransformData, 
-													  world	: Dictionary) : INode
+		override protected function getOutputPosition() : INode
 		{
 			return vertexClipspacePosition;
 		}
 		
-		override protected function getOutputColor(style	: StyleStack, 
-												   local	: TransformData, 
-												   world	: Dictionary) : INode
+		override public function fillRenderState(state 	: RendererState,
+												 style	: StyleStack,
+												 local	: LocalData,
+												 world	: Dictionary) : Boolean
 		{
-			var texture : Texture = sampleTexture(BasicStyle.DIFFUSE_MAP, interpolate(vertexUV));
+			super.fillRenderState(state, style, local, world);
 			
-			var normal	: INode = multiply(interpolate(vertexPosition), 2.);
+			state.blending = Blending.NORMAL;
+			
+			return true;
+		}
+		
+		override protected function getOutputColor() : INode
+		{
+			var diffuse : INode = sampleTexture(BasicStyle.DIFFUSE_MAP, interpolate(vertexUV));
+			var normal	: INode = sampleTexture(BasicStyle.NORMAL_MAP, interpolate(vertexUV));
+			
+			// compute the normal in local space
+			normal = combine(dotProduct3(interpolate(vertexTangent), normal),
+							 dotProduct3(interpolate(vertexBinormal), normal),
+							 dotProduct3(interpolate(vertexNormal), normal),
+							 1.);
+			
+			//normal = multiply4x4(normal, localToWorldMatrix);
+			
 			var angle	: INode = dotProduct3(normal, cameraLocalDirection);
 			
-			var coeff	: INode = power(substract(1.05, angle), 3.);
-			
-			return add(texture, multiply(coeff, ConstVector4.ONE));
+			//return multiply(cos(angle), diffuse);
+			return interpolate(vertexTangent);
 		}
 	}
 }

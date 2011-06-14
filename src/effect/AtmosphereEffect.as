@@ -1,10 +1,10 @@
 package effect
 {
+	import aerys.minko.render.renderer.state.RendererState;
+	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.render.shader.node.INode;
-	import aerys.minko.render.state.RenderState;
-	import aerys.minko.render.state.TriangleCulling;
+	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
-	import aerys.minko.scene.visitor.data.TransformData;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
@@ -24,9 +24,9 @@ package effect
 			super();
 		}
 		
-		override public function fillRenderState(state	: RenderState,
+		override public function fillRenderState(state	: RendererState,
 						 						 style	: StyleStack, 
-												 local	: TransformData, 
+												 local	: LocalData, 
 												 world	: Dictionary) : Boolean
 		{
 			super.fillRenderState(state, style, local, world);
@@ -36,16 +36,12 @@ package effect
 			return true;
 		}
 		
-		override protected function getOutputPosition(style	: StyleStack, 
-													  local	: TransformData, 
-													  world	: Dictionary) : INode
+		override protected function getOutputPosition() : INode
 		{
 			return vertexClipspacePosition;
 		}
 		
-		override protected function getOutputColor(style	: StyleStack, 
-												   local	: TransformData, 
-												   world	: Dictionary) : INode
+		override protected function getOutputColor() : INode
 		{
 			var normal	: INode = multiply(interpolate(vertexPosition), 2.);
 			var angle	: INode = dotProduct3(normal, cameraLocalDirection);

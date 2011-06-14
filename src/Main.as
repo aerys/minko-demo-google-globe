@@ -6,9 +6,9 @@ package
 	import aerys.minko.type.math.Vector4;
 	import aerys.monitor.Monitor;
 	import aerys.qark.Qark;
-	
+
 	import aze.motion.EazeTween;
-	
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -50,10 +50,10 @@ package
 		private var _camera			: ArcBallCamera		= new ArcBallCamera();
 		private var _globe			: Globe				= new Globe();
 		private var _scene			: Group				= new Group(_camera,
-																	_globe,
-																	new Earth(),
-																	new Atmosphere());
-		
+																	//_globe,
+																	new Earth()/*,
+																	new Atmosphere()*/);
+
 		private var _cursor			: Point				= new Point();
 		private var _speed			: Vector4			= new Vector4();
 		private var _initialized	: Boolean			= false;
@@ -72,7 +72,7 @@ package
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, initialize);
 			
-//			initializeMonitor();
+			initializeMonitor();
 			initializeUI();
 			initializeScene();
 			
@@ -83,14 +83,18 @@ package
 		private function initializeScene() : void
 		{
 			_viewport.defaultEffect = null;
+			_viewport.backgroundColor = 0xff0000;
 			addChild(_viewport);
 			
 			loadPopulationData();
 			//loadSearchData();
-			
+		
 			_camera.distance = MIN_ZOOM;
-			new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})
-										   .onComplete(cameraTweenComplete);
+		/*	new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})
+										   .onComplete(cameraTweenComplete);*/
+			_camera.rotation.y = Math.PI + Math.PI / 4;
+			_camera.rotation.x = Math.PI / -5;
+			cameraTweenComplete();
 		}
 		
 		private function cameraTweenComplete() : void
@@ -209,7 +213,7 @@ package
 				else if (_camera.distance > MIN_ZOOM)
 					_camera.distance = MIN_ZOOM;
 			}
-				
+			
 			_viewport.render(_scene);
 		}
 		
