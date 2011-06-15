@@ -9,6 +9,7 @@ package effect
 	import aerys.minko.render.shader.ParametricShader;
 	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
+	import aerys.minko.scene.visitor.data.ViewportData;
 	
 	import flash.utils.Dictionary;
 	
@@ -40,6 +41,7 @@ package effect
 			state.blending = Blending.ALPHA;
 			state.depthTest = CompareMode.LESS;
 			state.triangleCulling = TriangleCulling.BACK;
+			state.renderTarget = world[ViewportData].renderTarget;
 			
 			return true;
 		}

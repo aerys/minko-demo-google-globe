@@ -1,10 +1,13 @@
 package effect
 {
+	import aerys.minko.render.renderer.state.Blending;
+	import aerys.minko.render.renderer.state.CompareMode;
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.render.shader.node.INode;
 	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
+	import aerys.minko.scene.visitor.data.ViewportData;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
@@ -19,9 +22,9 @@ package effect
 										 blue	: Number	= 1.,
 										 alpha	: Number	= 1.)
 		{
-			_color = new Vector4(red, green, blue, alpha);
-			
 			super();
+			
+			_color = new Vector4(red, green, blue, alpha);
 		}
 		
 		override public function fillRenderState(state	: RendererState,
@@ -32,6 +35,7 @@ package effect
 			super.fillRenderState(state, style, local, world);
 			
 			state.triangleCulling = TriangleCulling.FRONT;
+			state.priority = 0.;
 			
 			return true;
 		}
@@ -45,7 +49,7 @@ package effect
 		{
 			var normal	: INode = multiply(interpolate(vertexPosition), 2.);
 			var angle	: INode = dotProduct3(normal, cameraLocalDirection);
-			var c		: INode = power(substract(0.8, angle), 12.);
+			var c		: INode = pow(subtract(0.8, angle), 12.);
 			
 			return multiply(_color, c);
 		}

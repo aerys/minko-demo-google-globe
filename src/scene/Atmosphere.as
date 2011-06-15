@@ -15,7 +15,7 @@ package scene
 			super(new SphereMesh(40));
 			
 			transform.appendUniformScale(DEFAULT_SCALE);
-			effect = new AtmosphereEffect();
+			effect = new AtmosphereEffect(.6, .9, 1.);
 		}
 	}
 }

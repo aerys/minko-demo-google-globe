@@ -1,6 +1,8 @@
 package
 {
 	import aerys.minko.render.Viewport;
+	import aerys.minko.render.renderer.DefaultRenderer;
+	import aerys.minko.render.renderer.DirectRenderer;
 	import aerys.minko.scene.node.camera.ArcBallCamera;
 	import aerys.minko.scene.node.group.Group;
 	import aerys.minko.type.math.Vector4;
@@ -16,6 +18,7 @@ package
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.ByteArray;
+
 	import scene.Atmosphere;
 	import scene.Earth;
 	import scene.Globe;
@@ -50,10 +53,10 @@ package
 		private var _camera			: ArcBallCamera		= new ArcBallCamera();
 		private var _globe			: Globe				= new Globe();
 		private var _scene			: Group				= new Group(_camera,
-																	//_globe,
-																	new Earth()/*,
-																	new Atmosphere()*/);
-
+																	_globe,
+																	new Earth(),
+																	new Atmosphere());
+		
 		private var _cursor			: Point				= new Point();
 		private var _speed			: Vector4			= new Vector4();
 		private var _initialized	: Boolean			= false;
@@ -83,7 +86,6 @@ package
 		private function initializeScene() : void
 		{
 			_viewport.defaultEffect = null;
-			_viewport.backgroundColor = 0xff0000;
 			addChild(_viewport);
 			
 			loadPopulationData();
@@ -108,7 +110,7 @@ package
 		private function initializeMonitor() : void
 		{
 			Monitor.monitor.watch(_viewport, ["numTriangles"]);
-			addChild(Monitor.monitor);
+			//addChild(Monitor.monitor);
 		}
 		
 		private function initializeUI() : void
