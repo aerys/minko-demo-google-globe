@@ -4,6 +4,7 @@ package effect
 	import aerys.minko.render.renderer.state.CompareMode;
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
+	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.INode;
 	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
@@ -40,18 +41,26 @@ package effect
 			return true;
 		}
 		
-		override protected function getOutputPosition() : INode
+		override protected function getOutputPosition() : SValue
 		{
 			return vertexClipspacePosition;
 		}
 		
-		override protected function getOutputColor() : INode
+		override protected function getOutputColor() : SValue
 		{
-			var normal	: INode = multiply(interpolate(vertexPosition), 2.);
+			/*var normal	: INode = multiply(interpolate(vertexPosition), 2.);
 			var angle	: INode = dotProduct3(normal, cameraLocalDirection);
-			var c		: INode = pow(subtract(0.8, angle), 12.);
+			var c		: INode = pow(subtract(0.8, angle), 12.);*/
 			
-			return multiply(_color, c);
+			var normal : SValue	= interpolate(vertexPosition);
+			
+			normal.multiply(2.);
+			//normal = new SValue(multiply(normal, 2.));
+			
+			var angle 	: SValue = dotProduct3(normal, cameraLocalDirection);
+			var color	: SValue = new SValue(_color);
+			
+			return color.multiply(pow(subtract(0.8, angle), 12.0));
 		}
 	}
 }

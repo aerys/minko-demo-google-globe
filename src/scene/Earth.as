@@ -6,13 +6,10 @@ package scene
 	import aerys.minko.scene.node.group.TransformGroup;
 	import aerys.minko.scene.node.mesh.IMesh;
 	import aerys.minko.scene.node.mesh.modifier.TangentSpaceMeshModifier;
-	import aerys.minko.scene.node.mesh.primitive.CubeMesh;
 	import aerys.minko.scene.node.mesh.primitive.SphereMesh;
 	import aerys.minko.scene.node.texture.BitmapTexture;
 	
 	import effect.EarthEffect;
-	
-	import scene.mesh.GeodesicSphere;
 	
 	public class Earth extends TransformGroup
 	{
@@ -23,7 +20,7 @@ package scene
 		[Embed("../assets/world_normal.jpg")]
 //		[Embed("../assets/world_normal_2.jpg")]
 		private static const ASSET_WORLD_NORMAL 	: Class;
-	
+		
 		private static const DEFAULT_SCALE	: Number	= 200.;
 		
 		public function Earth(scale : Number = DEFAULT_SCALE)
@@ -31,8 +28,6 @@ package scene
 			var diffuse : BitmapTexture	= Loader3D.loadAsset(ASSET_WORLD_DIFFUSE)[0];
 			var normal	: BitmapTexture	= Loader3D.loadAsset(ASSET_WORLD_NORMAL)[0];
 			var mesh	: IMesh			= new TangentSpaceMeshModifier(new SphereMesh(40));
-//			var mesh	: IMesh			= new TangentSpaceMeshModifier(new GeodesicSphere());
-//			var mesh	: IMesh			= new TangentSpaceMeshModifier(CubeMesh.cubeMesh);
 			var eg		: EffectGroup	= new EffectGroup(diffuse, normal, mesh);
 
 			diffuse.styleProperty = BasicStyle.DIFFUSE_MAP;

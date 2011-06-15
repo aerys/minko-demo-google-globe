@@ -3,7 +3,10 @@ package effect
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.state.Blending;
 	import aerys.minko.render.renderer.state.RendererState;
+	import aerys.minko.render.shader.SValue;
+	import aerys.minko.render.shader.node.Components;
 	import aerys.minko.render.shader.node.INode;
+	import aerys.minko.render.shader.node.operation.manipulation.Extract;
 	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
 	import aerys.minko.type.math.ConstVector4;
@@ -16,13 +19,16 @@ package effect
 	
 	public class EarthEffect extends SinglePassEffect
 	{
+		private static const SPECULAR	: Boolean	= true;
+		private static const ATMOSPHERE	: Boolean	= true;
+		
 		private var _lightPosition	: Vector4	= new Vector4(0., 0., 500.);
 		private var _lightDiffuse	: Vector4	= new Vector4(1., 1., 1.);
 		private var _lightAmbient	: Vector4	= new Vector4();
 		
-		private var _lightVec		: INode	= null;
-		private var _eyeVec			: INode	= null;
-		private var _halfVector		: INode	= null;
+		private var _lightVec		: SValue	= null;
+		private var _eyeVec			: SValue	= null;
+		private var _halfVector		: SValue	= null;
 		
 		override public function fillRenderState(state 	: RendererState,
 												 style	: StyleStack,
@@ -36,69 +42,78 @@ package effect
 			return true;
 		}
 		
-		override protected function getOutputPosition() : INode
+		override protected function getOutputPosition() : SValue
 		{
-			var t				: INode	= vertexTangent;
-			var n				: INode	= vertexNormal;
-			var b				: INode	= cross(n, t);
-			var vertexPos 		: INode = vertexPosition;
-			var lightPosition	: INode	= cameraLocalPosition;//multiply4x4(combine(0., 0., -5000.), worldToLocalMatrix);
-			var lightDirection	: INode	= normalize(subtract(lightPosition, vertexPos));
+			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);
+			var lightPosition	: SValue	= cameraLocalPosition;
+			var lightDirection	: SValue	= normalize(subtract(lightPosition, vertexPosition));
 			
-			_lightVec = combine(
-				dotProduct3(lightDirection, t),
-				dotProduct3(lightDirection, b),
-				dotProduct3(lightDirection, n)
+			_lightVec = vector3(
+				dotProduct3(lightDirection, vertexTangent),
+				dotProduct3(lightDirection, vertexBitangent),
+				dotProduct3(lightDirection, vertexNormal)
 			);
 			
-			/*_eyeVec = combine(
-				dotProduct3(lightDirection, t),
-				dotProduct3(lightDirection, b),
-				dotProduct3(lightDirection, n)
+			_eyeVec = normalize(subtract(vertexPosition, cameraLocalPosition));
+			_eyeVec = vector3(
+				dotProduct3(_eyeVec, vertexTangent),
+				dotProduct3(_eyeVec, vertexBitangent),
+				dotProduct3(_eyeVec, vertexNormal)
 			);
 			
-			vertexPos = normalize(vertexPos);
+			var vertexPos : SValue = normalize(vertexPosition);
 			
 			_halfVector = normalize(add(vertexPos, lightDirection));
-			_halfVector = combine(
-				dotProduct3(_halfVector, t),
-				dotProduct3(_halfVector, b),
-				dotProduct3(_halfVector, n)
-			);*/
+			_halfVector = vector3(
+				dotProduct3(_halfVector, vertexTangent),
+				dotProduct3(_halfVector, vertexBitangent),
+				dotProduct3(_halfVector, vertexNormal)
+			);
 			
 			return vertexClipspacePosition;
 		}
-	
-		override protected function getOutputColor() : INode
+		
+		override protected function getOutputColor() : SValue
 		{
 			// bump mapping
-			var lightVec		: INode		= interpolate(_lightVec);
+			var lightVec		: SValue	= interpolate(_lightVec);
 			
-			var uv				: INode		= interpolate(vertexUV);
-			var diffuseMaterial	: INode		= sampleTexture(BasicStyle.DIFFUSE_MAP, uv);
-			var normal			: INode 	= sampleTexture(BasicStyle.NORMAL_MAP, uv);
+			var uv				: SValue	= interpolate(vertexUV);
+			var diffuseMaterial	: SValue	= sampleTexture(BasicStyle.DIFFUSE_MAP, uv);
+			var normal			: SValue 	= sampleTexture(BasicStyle.NORMAL_MAP, uv);
 			
-			normal = subtract(multiply(normal, 2.), 1.);
-			normal = normalize(normal);
+			normal = subtract(normal.multiply(2.), 1.);
+			normal.normalize();
 			
-			var lamberFactor	: INode		= max(dotProduct3(lightVec, normal), 0.);
-			var illumination	: INode		= multiply(_lightDiffuse, lamberFactor);
+			var lamberFactor	: SValue	= max(dotProduct3(lightVec, normal), 0.);
+			var illumination	: SValue	= multiply(_lightDiffuse, lamberFactor);
 			
-			illumination = add(_lightAmbient, illumination);
-			illumination = pow(illumination, 2.);
+			illumination.add(_lightAmbient);
+			illumination = illumination.pow(2.);
+			
+			if (SPECULAR)
+			{
+				var ref			: SValue	= planarReflection(lightVec, normal);
+				var halfVector	: SValue	= interpolate(_halfVector);
+				var shininess	: SValue	= pow(max(dotProduct3(ref, interpolate(_eyeVec)), 0.0), 2.0);
+
+				illumination.increment(shininess);
+			}
+			
+			var diffuse : SValue = multiply(diffuseMaterial, illumination);
 			
 			// atmosphere
-			var atmosphere		: INode		= dotProduct3(interpolate(vertexNormal), cameraLocalDirection);
+			if (ATMOSPHERE)
+			{
+				var atmosphere	: SValue	= dotProduct3(interpolate(vertexNormal), cameraLocalDirection);
+				
+				atmosphere = subtract(1.3, atmosphere).pow(3.);
+				atmosphere.scale(new Vector4(.6, .9, 1.));
+				
+				diffuse.increment(atmosphere);
+			}
 			
-			atmosphere = subtract(1.3, atmosphere);
-			atmosphere = pow(atmosphere, 3.);
-			atmosphere = multiply(atmosphere, new Vector4(.6, .9, 1.));
-			
-			//return diffuseMaterial;
-			return add(atmosphere, multiply(diffuseMaterial, illumination));
-			//return multiply(diffuseMaterial, illumination);
-			//return illumination;
-			//return lightVec;
+			return diffuse;
 		}
 	}
 }
