@@ -38,25 +38,24 @@ package effect
 		
 		override protected function getOutputPosition() : INode
 		{
-			var t				: INode	= normalize(multiply4x4(vertexTangent, localToViewMatrix));
-			var n				: INode	= normalize(multiply4x4(vertexNormal, localToViewMatrix));
+			var t				: INode	= vertexTangent;
+			var n				: INode	= vertexNormal;
 			var b				: INode	= cross(n, t);
-			var vertexPos 		: INode = multiply4x4(vertexPosition, localToViewMatrix);
-			var lightDirection	: INode	= normalize(subtract(_lightPosition, vertexPos));
+			var vertexPos 		: INode = vertexPosition;
+			var lightPosition	: INode	= cameraLocalPosition;//multiply4x4(combine(0., 0., -5000.), worldToLocalMatrix);
+			var lightDirection	: INode	= normalize(subtract(lightPosition, vertexPos));
 			
 			_lightVec = combine(
 				dotProduct3(lightDirection, t),
 				dotProduct3(lightDirection, b),
 				dotProduct3(lightDirection, n)
 			);
-			_lightVec = normalize(_lightVec);
 			
-			_eyeVec = combine(
+			/*_eyeVec = combine(
 				dotProduct3(lightDirection, t),
 				dotProduct3(lightDirection, b),
 				dotProduct3(lightDirection, n)
 			);
-			_eyeVec = normalize(_eyeVec);
 			
 			vertexPos = normalize(vertexPos);
 			
@@ -65,7 +64,7 @@ package effect
 				dotProduct3(_halfVector, t),
 				dotProduct3(_halfVector, b),
 				dotProduct3(_halfVector, n)
-			);
+			);*/
 			
 			return vertexClipspacePosition;
 		}
@@ -76,28 +75,30 @@ package effect
 			var lightVec		: INode		= interpolate(_lightVec);
 			
 			var uv				: INode		= interpolate(vertexUV);
+			var diffuseMaterial	: INode		= sampleTexture(BasicStyle.DIFFUSE_MAP, uv);
 			var normal			: INode 	= sampleTexture(BasicStyle.NORMAL_MAP, uv);
 			
-			normal = normalize(subtract(multiply(normal, 2.), 1.));
+			normal = subtract(multiply(normal, 2.), 1.);
+			normal = normalize(normal);
 			
 			var lamberFactor	: INode		= max(dotProduct3(lightVec, normal), 0.);
-			var diffuseMaterial	: INode		= sampleTexture(BasicStyle.DIFFUSE_MAP, uv);
-			
 			var illumination	: INode		= multiply(_lightDiffuse, lamberFactor);
 			
 			illumination = add(_lightAmbient, illumination);
+			illumination = pow(illumination, 2.);
 			
 			// atmosphere
-			var intensity		: INode		= dotProduct3(interpolate(vertexNormal), cameraLocalDirection);
+			var atmosphere		: INode		= dotProduct3(interpolate(vertexNormal), cameraLocalDirection);
 			
-			intensity = subtract(1.4, intensity);
-			intensity = pow(intensity, 3.);
-			intensity = multiply(intensity, new Vector4(.6, .9, 1.));
-				
-			//illumination = add(illumination, intensity);
+			atmosphere = subtract(1.3, atmosphere);
+			atmosphere = pow(atmosphere, 3.);
+			atmosphere = multiply(atmosphere, new Vector4(.6, .9, 1.));
 			
+			//return diffuseMaterial;
+			return add(atmosphere, multiply(diffuseMaterial, illumination));
+			//return multiply(diffuseMaterial, illumination);
 			//return illumination;
-			return add(intensity, multiply(diffuseMaterial, illumination));
+			//return lightVec;
 		}
 	}
 }

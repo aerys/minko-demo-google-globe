@@ -94,8 +94,6 @@ package
 			_camera.distance = MIN_ZOOM;
 		/*	new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})
 										   .onComplete(cameraTweenComplete);*/
-			_camera.rotation.y = Math.PI + Math.PI / 4;
-			_camera.rotation.x = Math.PI / -5;
 			cameraTweenComplete();
 		}
 		
