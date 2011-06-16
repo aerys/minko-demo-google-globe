@@ -45,7 +45,7 @@ package
 		private static const ASSET_POPULATION_JSON	: Class;*/
 		[Embed("../assets/population2000.qark",mimeType="application/octet-stream")]
 		private static const ASSET_POPULATION_QARK	: Class;
-		
+	
 		private static const MOUSE_SENSITIVITY		: Number	= .0006;
 		private static const SPEED_SCALE			: Number	= .9;
 		private static const MAX_POINTS_PER_MESH	: uint		= 8000.;
