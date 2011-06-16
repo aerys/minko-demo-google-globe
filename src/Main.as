@@ -1,16 +1,24 @@
 package
 {
 	import aerys.minko.render.Viewport;
+	import aerys.minko.render.effect.basic.BasicEffect;
+	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.DefaultRenderer;
 	import aerys.minko.render.renderer.DirectRenderer;
+	import aerys.minko.render.renderer.state.TriangleCulling;
+	import aerys.minko.scene.node.Loader3D;
+	import aerys.minko.scene.node.Model;
 	import aerys.minko.scene.node.camera.ArcBallCamera;
 	import aerys.minko.scene.node.group.Group;
+	import aerys.minko.scene.node.group.TransformGroup;
+	import aerys.minko.scene.node.mesh.primitive.CubeMesh;
+	import aerys.minko.scene.node.mesh.primitive.SphereMesh;
 	import aerys.minko.type.math.Vector4;
 	import aerys.monitor.Monitor;
 	import aerys.qark.Qark;
-
+	
 	import aze.motion.EazeTween;
-
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -18,7 +26,7 @@ package
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.ByteArray;
-
+	
 	import scene.Atmosphere;
 	import scene.Earth;
 	import scene.Globe;
@@ -27,8 +35,8 @@ package
 	
 	public class Main extends Sprite
 	{
-		[Embed("../assets/world.jpg")]
-		private static const ASSET_WORLD_DIFFUSE	: Class;
+		[Embed("../assets/stars.jpg")]
+		private static const ASSET_STARS_DIFFUSE	: Class;
 		/*[Embed("../assets/search.json",mimeType="application/octet-stream")]
 		private static const ASSET_SEARCH_JSON		: Class;*/
 		[Embed("../assets/search.qark",mimeType="application/octet-stream")]
@@ -90,13 +98,20 @@ package
 			
 			loadPopulationData();
 			//loadSearchData();
+			
+			var stars : Model	= new Model(SphereMesh.sphereMesh,
+											Loader3D.loadAsset(ASSET_STARS_DIFFUSE)[0]);
 		
+			stars.transform.appendUniformScale(1000.);
+			stars.style.set(BasicStyle.TRIANGLE_CULLING, TriangleCulling.FRONT);
+			stars.effect = new BasicEffect();
+		
+			_scene.addChild(stars);
 			_camera.distance = MIN_ZOOM;
-		/*	new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})
-										   .onComplete(cameraTweenComplete);*/
-			cameraTweenComplete();
+			new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})
+										   .onComplete(cameraTweenComplete);
 		}
-		
+
 		private function cameraTweenComplete() : void
 		{
 			_initialized = true;

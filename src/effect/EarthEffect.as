@@ -6,6 +6,7 @@ package effect
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
 	import aerys.minko.render.shader.node.INode;
+	import aerys.minko.render.shader.node.leaf.Sampler;
 	import aerys.minko.render.shader.node.operation.manipulation.Extract;
 	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
@@ -19,12 +20,13 @@ package effect
 	
 	public class EarthEffect extends SinglePassEffect
 	{
-		private static const SPECULAR	: Boolean	= true;
-		private static const ATMOSPHERE	: Boolean	= true;
-		
-		private var _lightPosition	: Vector4	= new Vector4(0., 0., 500.);
-		private var _lightDiffuse	: Vector4	= new Vector4(1., 1., 1.);
-		private var _lightAmbient	: Vector4	= new Vector4();
+		private static const SPECULAR		: Boolean	= true;
+		private static const ATMOSPHERE		: Boolean	= true;
+	
+		private static const LIGHT_POSITION	: Vector4	= new Vector4(0., 0., 500.);
+		private static const LIGHT_DIFFUSE	: Vector4	= new Vector4(.9, .9, .9);
+		private static const LIGHT_SPECULAR	: Vector4	= new Vector4(.25, .25, .25);
+		private static const LIGHT_AMBIENT	: Vector4	= new Vector4();
 		
 		private var _lightVec		: SValue	= null;
 		private var _eyeVec			: SValue	= null;
@@ -86,18 +88,18 @@ package effect
 			normal.normalize();
 			
 			var lamberFactor	: SValue	= max(dotProduct3(lightVec, normal), 0.);
-			var illumination	: SValue	= multiply(_lightDiffuse, lamberFactor);
+			var illumination	: SValue	= multiply(LIGHT_DIFFUSE, lamberFactor);
 			
-			illumination.add(_lightAmbient);
-			illumination = illumination.pow(2.);
+			illumination.add(LIGHT_AMBIENT);
+			//illumination = illumination.pow(2.);
 			
 			if (SPECULAR)
 			{
 				var ref			: SValue	= planarReflection(lightVec, normal);
 				var halfVector	: SValue	= interpolate(_halfVector);
-				var shininess	: SValue	= pow(max(dotProduct3(ref, interpolate(_eyeVec)), 0.0), 2.0);
+				var shininess	: SValue	= pow(max(dotProduct3(ref, halfVector), 0.0), 2.0);
 
-				illumination.increment(shininess);
+				illumination.increment(shininess.multiply(LIGHT_SPECULAR));
 			}
 			
 			var diffuse : SValue = multiply(diffuseMaterial, illumination);
@@ -107,7 +109,7 @@ package effect
 			{
 				var atmosphere	: SValue	= dotProduct3(interpolate(vertexNormal), cameraLocalDirection);
 				
-				atmosphere = subtract(1.3, atmosphere).pow(3.);
+				atmosphere = subtract(1.4, atmosphere).pow(4.);
 				atmosphere.scale(new Vector4(.6, .9, 1.));
 				
 				diffuse.increment(atmosphere);

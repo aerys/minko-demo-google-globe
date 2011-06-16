@@ -14,23 +14,26 @@ package effect
 	import flash.utils.Dictionary;
 	
 	
-	public class AtmosphereEffect extends SinglePassEffect
+	public class GlowEffect extends SinglePassEffect
 	{
 		private var _color	: Vector4	= null;
+		private var _blur	: Number	= 0.;
 		
-		public function AtmosphereEffect(red	: Number	= 1.,
-										 green	: Number	= 1.,
-										 blue	: Number	= 1.,
-										 alpha	: Number	= 1.)
+		public function GlowEffect(blur		: Number	= 0.165,
+								   red		: Number	= 1.,
+								   green	: Number	= 1.,
+								   blue		: Number	= 1.,
+								   alpha	: Number	= 1.)
 		{
 			super();
 			
+			_blur = blur;
 			_color = new Vector4(red, green, blue, alpha);
 		}
 		
 		override public function fillRenderState(state	: RendererState,
 						 						 style	: StyleStack, 
-												 local	: LocalData, 
+												 local	: LocalData,
 												 world	: Dictionary) : Boolean
 		{
 			super.fillRenderState(state, style, local, world);
@@ -43,22 +46,18 @@ package effect
 		
 		override protected function getOutputPosition() : SValue
 		{
-			return vertexClipspacePosition;
+			var pos	: SValue	= vertexPosition.multiply4x4(localToViewMatrix);
+			
+			pos.scale(vector3(1. + _blur, 1. + _blur, 1.));
+			
+			return pos.multiply4x4(projectionMatrix);
 		}
 		
 		override protected function getOutputColor() : SValue
 		{
-			/*var normal	: INode = multiply(interpolate(vertexPosition), 2.);
-			var angle	: INode = dotProduct3(normal, cameraLocalDirection);
-			var c		: INode = pow(subtract(0.8, angle), 12.);*/
-			
-			var normal : SValue	= interpolate(vertexPosition);
-			
-			normal.multiply(2.);
-			//normal = new SValue(multiply(normal, 2.));
-			
-			var angle 	: SValue = dotProduct3(normal, cameraLocalDirection);
-			var color	: SValue = new SValue(_color);
+			var normal 	: SValue	= interpolate(vertexNormal);
+			var angle 	: SValue 	= normal.dotProduct3(cameraLocalDirection);
+			var color	: SValue 	= new SValue(_color);
 			
 			return color.multiply(pow(subtract(0.8, angle), 12.0));
 		}
