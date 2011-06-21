@@ -23,10 +23,11 @@ package effect
 		private static const SPECULAR		: Boolean	= true;
 		private static const ATMOSPHERE		: Boolean	= true;
 	
-		private static const LIGHT_POSITION	: Vector4	= new Vector4(0., 0., 500.);
-		private static const LIGHT_DIFFUSE	: Vector4	= new Vector4(.9, .9, .9);
-		private static const LIGHT_SPECULAR	: Vector4	= new Vector4(.25, .25, .25);
-		private static const LIGHT_AMBIENT	: Vector4	= new Vector4();
+		private static const LIGHT_POSITION		: Vector4	= new Vector4(0., 0., 500.);
+		private static const LIGHT_DIFFUSE		: Vector4	= new Vector4(.8, .8, .8);
+		private static const LIGHT_SPECULAR		: Vector4	= new Vector4(.5, .5, .5);
+		private static const LIGHT_AMBIENT		: Vector4	= new Vector4(1., 1., 1.);
+		private static const LIGHT_SHININESS	: Number	= 8.;
 		
 		private var _lightVec		: SValue	= null;
 		private var _eyeVec			: SValue	= null;
@@ -97,7 +98,8 @@ package effect
 			{
 				var ref			: SValue	= planarReflection(lightVec, normal);
 				var halfVector	: SValue	= interpolate(_halfVector);
-				var shininess	: SValue	= pow(max(dotProduct3(ref, halfVector), 0.0), 2.0);
+				var shininess	: SValue	= pow(max(dotProduct3(ref, halfVector), 0.0),
+												  LIGHT_SHININESS);
 
 				illumination.increment(shininess.multiply(LIGHT_SPECULAR));
 			}
@@ -110,7 +112,7 @@ package effect
 				var atmosphere	: SValue	= dotProduct3(interpolate(vertexNormal), cameraLocalDirection);
 				
 				atmosphere = subtract(1.4, atmosphere).pow(4.);
-				atmosphere.scale(new Vector4(.6, .9, 1.));
+				atmosphere.scaleBy(new Vector4(.6, .9, 1.));
 				
 				diffuse.increment(atmosphere);
 			}

@@ -3,6 +3,7 @@ package scene.mesh
 	import aerys.minko.scene.node.mesh.Mesh;
 	import aerys.minko.type.math.ConstVector4;
 	import aerys.minko.type.math.Transform3D;
+	import aerys.minko.type.stream.IVertexStream;
 	import aerys.minko.type.stream.IndexStream;
 	import aerys.minko.type.stream.VertexStream;
 	import aerys.minko.type.stream.VertexStreamList;
@@ -38,7 +39,7 @@ package scene.mesh
 								 size	: Number,
 								 color 	: uint) : void
 		{
-			var stream 		: VertexStream 		= vertexStreamList.getVertexStream();
+			var stream 		: VertexStream	 	= vertexStream.getSubStreamById(0);
 			var transform	: Transform3D		= new Transform3D();
 			var phi			: Number			= (90. - lat) * Math.PI / 180.;
 			var theta		: Number			= (180. - lng) * Math.PI / 180.;

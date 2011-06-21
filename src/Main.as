@@ -5,14 +5,18 @@ package
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.DefaultRenderer;
 	import aerys.minko.render.renderer.DirectRenderer;
+	import aerys.minko.render.renderer.state.Blending;
 	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.scene.node.Loader3D;
 	import aerys.minko.scene.node.Model;
 	import aerys.minko.scene.node.camera.ArcBallCamera;
 	import aerys.minko.scene.node.group.Group;
+	import aerys.minko.scene.node.group.StyleGroup;
 	import aerys.minko.scene.node.group.TransformGroup;
 	import aerys.minko.scene.node.mesh.primitive.CubeMesh;
 	import aerys.minko.scene.node.mesh.primitive.SphereMesh;
+	import aerys.minko.scene.node.texture.ITexture;
+	import aerys.minko.type.math.ConstVector4;
 	import aerys.minko.type.math.Vector4;
 	import aerys.monitor.Monitor;
 	import aerys.qark.Qark;
@@ -35,8 +39,10 @@ package
 	
 	public class Main extends Sprite
 	{
-		[Embed("../assets/stars.jpg")]
+		/*[Embed("../assets/stars.jpg")]
 		private static const ASSET_STARS_DIFFUSE	: Class;
+		[Embed("../assets/stars_layer.jpg")]
+		private static const ASSET_STARS_LAYER		: Class;*/
 		/*[Embed("../assets/search.json",mimeType="application/octet-stream")]
 		private static const ASSET_SEARCH_JSON		: Class;*/
 		[Embed("../assets/search.qark",mimeType="application/octet-stream")]
@@ -61,7 +67,7 @@ package
 		private var _camera			: ArcBallCamera		= new ArcBallCamera();
 		private var _globe			: Globe				= new Globe();
 		private var _scene			: Group				= new Group(_camera,
-																	_globe,
+//																	_globe,
 																	new Earth(),
 																	new Atmosphere());
 		
@@ -93,21 +99,38 @@ package
 		
 		private function initializeScene() : void
 		{
-			_viewport.defaultEffect = null;
+			//_viewport.defaultEffect = null;
 			addChild(_viewport);
 			
 			loadPopulationData();
 			//loadSearchData();
 			
-			var stars : Model	= new Model(SphereMesh.sphereMesh,
+			/*var stars : Model	= new Model(SphereMesh.sphereMesh,
 											Loader3D.loadAsset(ASSET_STARS_DIFFUSE)[0]);
 		
-			stars.transform.appendUniformScale(1000.);
+			stars.transform.appendScale(10000., 5000., 10000.);
 			stars.style.set(BasicStyle.TRIANGLE_CULLING, TriangleCulling.FRONT);
 			stars.effect = new BasicEffect();
+			
+			var layers : StyleGroup	= new StyleGroup(Loader3D.loadAsset(ASSET_STARS_LAYER)[0]);
 		
-			_scene.addChild(stars);
+			layers.style.set(BasicStyle.BLENDING, 			Blending.ADDITIVE)
+						.set(BasicStyle.TRIANGLE_CULLING,	TriangleCulling.FRONT);
+			
+			for (var i : int = 1; i <= 3; ++i)
+			{
+				var tg : TransformGroup	= new TransformGroup(SphereMesh.sphereMesh);
+				
+				tg.transform.appendUniformScale(300 + 9000 / i)
+							.appendRotation(Math.random() * Math.PI * 2., ConstVector4.Y_AXIS);
+				layers.addChild(tg);
+			}
+			
+			_scene.addChild(stars)
+				  .addChildAt(layers, 0);*/
+		
 			_camera.distance = MIN_ZOOM;
+			_camera.farClipping = 11000;
 			new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})
 										   .onComplete(cameraTweenComplete);
 		}
@@ -132,7 +155,7 @@ package
 			_text.autoSize = TextFieldAutoSize.LEFT;
 			_text.x = 30.;
 			_text.y = 30.;
-			addChild(_text);
+//			addChild(_text);
 		}
 		
 		private function loadPopulationData() : void

@@ -1,14 +1,10 @@
 package effect
 {
-	import aerys.minko.render.renderer.state.Blending;
-	import aerys.minko.render.renderer.state.CompareMode;
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.render.shader.SValue;
-	import aerys.minko.render.shader.node.INode;
 	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
-	import aerys.minko.scene.visitor.data.ViewportData;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
@@ -48,7 +44,7 @@ package effect
 		{
 			var pos	: SValue	= vertexPosition.multiply4x4(localToViewMatrix);
 			
-			pos.scale(vector3(1. + _blur, 1. + _blur, 1.));
+			pos.scaleBy(vector3(1. + _blur, 1. + _blur, 1.));
 			
 			return pos.multiply4x4(projectionMatrix);
 		}
@@ -57,9 +53,8 @@ package effect
 		{
 			var normal 	: SValue	= interpolate(vertexNormal);
 			var angle 	: SValue 	= normal.dotProduct3(cameraLocalDirection);
-			var color	: SValue 	= new SValue(_color);
 			
-			return color.multiply(pow(subtract(0.8, angle), 12.0));
+			return multiply(_color, (pow(subtract(0.8, angle), 12.0)));
 		}
 	}
 }
