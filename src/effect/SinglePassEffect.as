@@ -6,14 +6,14 @@ package effect
 	import aerys.minko.render.renderer.state.CompareMode;
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
-	import aerys.minko.render.shader.ParametricShader;
+	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.scene.visitor.data.LocalData;
 	import aerys.minko.scene.visitor.data.StyleStack;
 	import aerys.minko.scene.visitor.data.ViewportData;
 	
 	import flash.utils.Dictionary;
 	
-	public class SinglePassEffect extends ParametricShader implements IEffect, IEffectPass
+	public class SinglePassEffect extends ActionScriptShader implements IEffect, IEffectPass
 	{
 		private var _passes	: Vector.<IEffectPass>	= new Vector.<IEffectPass>(1, true);
 		

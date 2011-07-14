@@ -7,7 +7,7 @@ package
 	import aerys.minko.render.renderer.DirectRenderer;
 	import aerys.minko.render.renderer.state.Blending;
 	import aerys.minko.render.renderer.state.TriangleCulling;
-	import aerys.minko.scene.node.Loader3D;
+	import aerys.minko.scene.node.group.LoaderGroup;
 	import aerys.minko.scene.node.Model;
 	import aerys.minko.scene.node.camera.ArcBallCamera;
 	import aerys.minko.scene.node.group.Group;
@@ -20,9 +20,9 @@ package
 	import aerys.minko.type.math.Vector4;
 	import aerys.monitor.Monitor;
 	import aerys.qark.Qark;
-	
+
 	import aze.motion.EazeTween;
-	
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -51,7 +51,7 @@ package
 		private static const ASSET_POPULATION_JSON	: Class;*/
 		[Embed("../assets/population2000.qark",mimeType="application/octet-stream")]
 		private static const ASSET_POPULATION_QARK	: Class;
-	
+
 		private static const MOUSE_SENSITIVITY		: Number	= .0006;
 		private static const SPEED_SCALE			: Number	= .9;
 		private static const MAX_POINTS_PER_MESH	: uint		= 8000.;
@@ -67,7 +67,7 @@ package
 		private var _camera			: ArcBallCamera		= new ArcBallCamera();
 		private var _globe			: Globe				= new Globe();
 		private var _scene			: Group				= new Group(_camera,
-//																	_globe,
+																	_globe,
 																	new Earth(),
 																	new Atmosphere());
 		
@@ -145,8 +145,8 @@ package
 		
 		private function initializeMonitor() : void
 		{
-			Monitor.monitor.watch(_viewport, ["numTriangles"]);
-			//addChild(Monitor.monitor);
+			Monitor.monitor.watch(_viewport, ["numTriangles", "drawingTime", "renderingTime"]);
+			addChild(Monitor.monitor);
 		}
 		
 		private function initializeUI() : void
@@ -155,7 +155,7 @@ package
 			_text.autoSize = TextFieldAutoSize.LEFT;
 			_text.x = 30.;
 			_text.y = 30.;
-//			addChild(_text);
+			addChild(_text);
 		}
 		
 		private function loadPopulationData() : void

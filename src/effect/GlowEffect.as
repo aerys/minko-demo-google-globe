@@ -54,7 +54,7 @@ package effect
 			var normal 	: SValue	= interpolate(vertexNormal);
 			var angle 	: SValue 	= normal.dotProduct3(cameraLocalDirection);
 			
-			return multiply(_color, (pow(subtract(0.8, angle), 12.0)));
+			return multiply(_color, (power(subtract(0.8, angle), 12.0)));
 		}
 	}
 }

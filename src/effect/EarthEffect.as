@@ -22,7 +22,7 @@ package effect
 	{
 		private static const SPECULAR		: Boolean	= true;
 		private static const ATMOSPHERE		: Boolean	= true;
-	
+
 		private static const LIGHT_POSITION		: Vector4	= new Vector4(0., 0., 500.);
 		private static const LIGHT_DIFFUSE		: Vector4	= new Vector4(.8, .8, .8);
 		private static const LIGHT_SPECULAR		: Vector4	= new Vector4(.5, .5, .5);
@@ -96,10 +96,10 @@ package effect
 			
 			if (SPECULAR)
 			{
-				var ref			: SValue	= planarReflection(lightVec, normal);
+				var ref			: SValue	= getReflectedVector(lightVec, normal);
 				var halfVector	: SValue	= interpolate(_halfVector);
-				var shininess	: SValue	= pow(max(dotProduct3(ref, halfVector), 0.0),
-												  LIGHT_SHININESS);
+				var shininess	: SValue	= power(max(dotProduct3(ref, halfVector), 0.0),
+												  	LIGHT_SHININESS);
 
 				illumination.increment(shininess.multiply(LIGHT_SPECULAR));
 			}
