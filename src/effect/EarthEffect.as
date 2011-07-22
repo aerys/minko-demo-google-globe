@@ -4,13 +4,8 @@ package effect
 	import aerys.minko.render.renderer.state.Blending;
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.shader.SValue;
-	import aerys.minko.render.shader.node.Components;
-	import aerys.minko.render.shader.node.INode;
-	import aerys.minko.render.shader.node.leaf.Sampler;
-	import aerys.minko.render.shader.node.operation.manipulation.Extract;
-	import aerys.minko.scene.visitor.data.LocalData;
-	import aerys.minko.scene.visitor.data.StyleStack;
-	import aerys.minko.type.math.ConstVector4;
+	import aerys.minko.scene.data.LocalData;
+	import aerys.minko.scene.data.StyleStack;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
@@ -51,14 +46,14 @@ package effect
 			var lightPosition	: SValue	= cameraLocalPosition;
 			var lightDirection	: SValue	= normalize(subtract(lightPosition, vertexPosition));
 			
-			_lightVec = vector3(
+			_lightVec = float3(
 				dotProduct3(lightDirection, vertexTangent),
 				dotProduct3(lightDirection, vertexBitangent),
 				dotProduct3(lightDirection, vertexNormal)
 			);
 			
 			_eyeVec = normalize(subtract(vertexPosition, cameraLocalPosition));
-			_eyeVec = vector3(
+			_eyeVec = float3(
 				dotProduct3(_eyeVec, vertexTangent),
 				dotProduct3(_eyeVec, vertexBitangent),
 				dotProduct3(_eyeVec, vertexNormal)
@@ -67,7 +62,7 @@ package effect
 			var vertexPos : SValue = normalize(vertexPosition);
 			
 			_halfVector = normalize(add(vertexPos, lightDirection));
-			_halfVector = vector3(
+			_halfVector = float3(
 				dotProduct3(_halfVector, vertexTangent),
 				dotProduct3(_halfVector, vertexBitangent),
 				dotProduct3(_halfVector, vertexNormal)
@@ -109,7 +104,7 @@ package effect
 			// atmosphere
 			if (ATMOSPHERE)
 			{
-				var atmosphere	: SValue	= dotProduct3(interpolate(vertexNormal), cameraLocalDirection);
+				var atmosphere	: SValue	= negate(dotProduct3(interpolate(vertexNormal), cameraLocalDirection));
 				
 				atmosphere = subtract(1.4, atmosphere).pow(4.);
 				atmosphere.scaleBy(new Vector4(.6, .9, 1.));

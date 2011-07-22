@@ -63,7 +63,7 @@ package
 																   0x7f3f98, 0xf26522, 0x2bb673, 0xd7df23, 0xe6b23a,
 																   0x7ed3f7];
 		
-		private var _viewport		: Viewport			= new Viewport(0., 0., 2);
+		private var _viewport		: Viewport			= new Viewport(0., 0., true, 2);
 		private var _camera			: ArcBallCamera		= new ArcBallCamera();
 		private var _globe			: Globe				= new Globe();
 		private var _scene			: Group				= new Group(_camera,
@@ -100,35 +100,11 @@ package
 		private function initializeScene() : void
 		{
 			//_viewport.defaultEffect = null;
-			addChild(_viewport);
+			stage.addChild(_viewport);
 			
 			loadPopulationData();
 			//loadSearchData();
 			
-			/*var stars : Model	= new Model(SphereMesh.sphereMesh,
-											Loader3D.loadAsset(ASSET_STARS_DIFFUSE)[0]);
-		
-			stars.transform.appendScale(10000., 5000., 10000.);
-			stars.style.set(BasicStyle.TRIANGLE_CULLING, TriangleCulling.FRONT);
-			stars.effect = new BasicEffect();
-			
-			var layers : StyleGroup	= new StyleGroup(Loader3D.loadAsset(ASSET_STARS_LAYER)[0]);
-		
-			layers.style.set(BasicStyle.BLENDING, 			Blending.ADDITIVE)
-						.set(BasicStyle.TRIANGLE_CULLING,	TriangleCulling.FRONT);
-			
-			for (var i : int = 1; i <= 3; ++i)
-			{
-				var tg : TransformGroup	= new TransformGroup(SphereMesh.sphereMesh);
-				
-				tg.transform.appendUniformScale(300 + 9000 / i)
-							.appendRotation(Math.random() * Math.PI * 2., ConstVector4.Y_AXIS);
-				layers.addChild(tg);
-			}
-			
-			_scene.addChild(stars)
-				  .addChildAt(layers, 0);*/
-		
 			_camera.distance = MIN_ZOOM;
 			_camera.farClipping = 11000;
 			new EazeTween(_camera.rotation).to(1, {y: Math.PI * 2., x: -.5})

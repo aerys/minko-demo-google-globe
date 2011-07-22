@@ -3,8 +3,9 @@ package effect
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.render.shader.SValue;
-	import aerys.minko.scene.visitor.data.LocalData;
-	import aerys.minko.scene.visitor.data.StyleStack;
+	import aerys.minko.scene.data.LocalData;
+	import aerys.minko.scene.data.StyleStack;
+	import aerys.minko.scene.data.ViewportData;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
@@ -36,6 +37,7 @@ package effect
 			
 			state.triangleCulling = TriangleCulling.FRONT;
 			state.priority = 0.;
+			state.renderTarget = (world[ViewportData] as ViewportData).renderTarget;
 			
 			return true;
 		}
@@ -44,7 +46,7 @@ package effect
 		{
 			var pos	: SValue	= vertexPosition.multiply4x4(localToViewMatrix);
 			
-			pos.scaleBy(vector3(1. + _blur, 1. + _blur, 1.));
+			pos.scaleBy(float3(1. + _blur, 1. + _blur, 1.));
 			
 			return pos.multiply4x4(projectionMatrix);
 		}
@@ -52,9 +54,9 @@ package effect
 		override protected function getOutputColor() : SValue
 		{
 			var normal 	: SValue	= interpolate(vertexNormal);
-			var angle 	: SValue 	= normal.dotProduct3(cameraLocalDirection);
+			var angle 	: SValue 	= negate(normal.dotProduct3(cameraLocalDirection));
 			
-			return multiply(_color, (power(subtract(0.8, angle), 12.0)));
+			return multiply(_color, power(subtract(0.8, angle), 12.0));
 		}
 	}
 }
