@@ -25,12 +25,12 @@ package scene
 		
 		public function Earth(scale : Number = DEFAULT_SCALE)
 		{
-			var diffuse : BitmapTexture	= LoaderGroup.loadAsset(ASSET_WORLD_DIFFUSE)[0];
-			var normal	: BitmapTexture	= LoaderGroup.loadAsset(ASSET_WORLD_NORMAL)[0];
+			var diffuse : BitmapTexture	= LoaderGroup.loadClass(ASSET_WORLD_DIFFUSE)[0];
+			var normal	: BitmapTexture	= LoaderGroup.loadClass(ASSET_WORLD_NORMAL)[0];
 			var mesh	: IMesh			= new TangentSpaceMeshModifier(new SphereMesh(40));
 			var eg		: EffectGroup	= new EffectGroup(diffuse, normal, mesh);
 			
-			diffuse.styleProperty = BasicStyle.DIFFUSE_MAP;
+			diffuse.styleProperty = BasicStyle.DIFFUSE;
 			normal.styleProperty = BasicStyle.NORMAL_MAP;
 			eg.effect = new EarthEffect();
 	

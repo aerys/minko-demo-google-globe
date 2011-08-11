@@ -3,13 +3,12 @@ package scene.mesh
 	import aerys.minko.scene.node.mesh.Mesh;
 	import aerys.minko.type.math.ConstVector4;
 	import aerys.minko.type.math.Transform3D;
-	import aerys.minko.type.stream.IVertexStream;
 	import aerys.minko.type.stream.IndexStream;
 	import aerys.minko.type.stream.VertexStream;
 	import aerys.minko.type.stream.VertexStreamList;
-	import aerys.minko.type.vertex.VertexIterator;
-	import aerys.minko.type.vertex.format.VertexComponent;
-	import aerys.minko.type.vertex.format.VertexFormat;
+	import aerys.minko.type.stream.format.VertexComponent;
+	import aerys.minko.type.stream.format.VertexFormat;
+	import aerys.minko.type.stream.iterator.VertexIterator;
 
 	public class PointsCloudMesh extends Mesh
 	{

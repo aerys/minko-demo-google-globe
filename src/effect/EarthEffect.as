@@ -77,7 +77,7 @@ package effect
 			var lightVec		: SValue	= interpolate(_lightVec);
 			
 			var uv				: SValue	= interpolate(vertexUV);
-			var diffuseMaterial	: SValue	= sampleTexture(BasicStyle.DIFFUSE_MAP, uv);
+			var diffuseMaterial	: SValue	= sampleTexture(BasicStyle.DIFFUSE, uv);
 			var normal			: SValue 	= sampleTexture(BasicStyle.NORMAL_MAP, uv);
 			
 			normal = subtract(normal.multiply(2.), 1.);
