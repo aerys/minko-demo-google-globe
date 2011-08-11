@@ -1,6 +1,7 @@
 package effect
 {
 	import aerys.minko.render.effect.SinglePassEffect;
+	import aerys.minko.render.renderer.state.Blending;
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.render.shader.SValue;
@@ -36,7 +37,8 @@ package effect
 			super.fillRenderState(state, style, local, world);
 			
 			state.triangleCulling = TriangleCulling.FRONT;
-			state.priority = 0.;
+			state.blending = Blending.ALPHA;
+			state.priority = -1.;
 						
 			return true;
 		}

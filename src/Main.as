@@ -101,9 +101,7 @@ package
 		
 		private function initializeScene() : void
 		{
-			Minko.debugLevel = DebugLevel.RENDERER;
-			
-			//_viewport.defaultEffect = null;
+			_viewport.defaultEffect = null;
 			stage.addChild(_viewport);
 			
 			loadPopulationData();
