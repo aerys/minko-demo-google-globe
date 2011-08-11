@@ -1,5 +1,6 @@
 package effect
 {
+	import aerys.minko.render.effect.SinglePassEffect;
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.state.Blending;
 	import aerys.minko.render.renderer.state.RendererState;
@@ -15,30 +16,19 @@ package effect
 	
 	public class EarthEffect extends SinglePassEffect
 	{
+		private static const BUMP_MAPPING	: Boolean	= true;
 		private static const SPECULAR		: Boolean	= true;
 		private static const ATMOSPHERE		: Boolean	= true;
 
 		private static const LIGHT_POSITION		: Vector4	= new Vector4(0., 0., 500.);
 		private static const LIGHT_DIFFUSE		: Vector4	= new Vector4(.8, .8, .8);
-		private static const LIGHT_SPECULAR		: Vector4	= new Vector4(.5, .5, .5);
-		private static const LIGHT_AMBIENT		: Vector4	= new Vector4(1., 1., 1.);
+		private static const LIGHT_SPECULAR		: Vector4	= new Vector4(.3, .3, .3);
+		private static const LIGHT_AMBIENT		: Vector4	= new Vector4(.1, .1, .1);
 		private static const LIGHT_SHININESS	: Number	= 8.;
 		
 		private var _lightVec		: SValue	= null;
 		private var _eyeVec			: SValue	= null;
 		private var _halfVector		: SValue	= null;
-		
-		override public function fillRenderState(state 	: RendererState,
-												 style	: StyleStack,
-												 local	: LocalData,
-												 world	: Dictionary) : Boolean
-		{
-			super.fillRenderState(state, style, local, world);
-			
-			state.blending = Blending.NORMAL;
-	
-			return true;
-		}
 		
 		override protected function getOutputPosition() : SValue
 		{
@@ -75,36 +65,40 @@ package effect
 		{
 			// bump mapping
 			var lightVec		: SValue	= interpolate(_lightVec);
-			
 			var uv				: SValue	= interpolate(vertexUV);
 			var diffuseMaterial	: SValue	= sampleTexture(BasicStyle.DIFFUSE, uv);
-			var normal			: SValue 	= sampleTexture(BasicStyle.NORMAL_MAP, uv);
+			var diffuse 		: SValue 	= diffuseMaterial.rgb;
+			var illumination	: SValue	= float3(LIGHT_AMBIENT);
 			
-			normal = subtract(normal.multiply(2.), 1.);
-			normal.normalize();
-			
-			var lamberFactor	: SValue	= max(dotProduct3(lightVec, normal), 0.);
-			var illumination	: SValue	= multiply(LIGHT_DIFFUSE, lamberFactor);
-			
-			illumination.add(LIGHT_AMBIENT);
-			//illumination = illumination.pow(2.);
-			
-			if (SPECULAR)
+			if (BUMP_MAPPING)
 			{
-				var ref			: SValue	= getReflectedVector(lightVec, normal);
-				var halfVector	: SValue	= interpolate(_halfVector);
-				var shininess	: SValue	= power(max(dotProduct3(ref, halfVector), 0.0),
-												  	LIGHT_SHININESS);
-
-				illumination.incrementBy(shininess.multiply(LIGHT_SPECULAR));
+				var normal	: SValue 	= sampleTexture(BasicStyle.NORMAL_MAP, uv);
+				
+				normal = subtract(normal.multiply(2.), 1.);
+				normal.normalize();
+				
+				var lamberFactor	: SValue	= max(dotProduct3(lightVec, normal), 0.);
+				
+				illumination.incrementBy(multiply(LIGHT_DIFFUSE, lamberFactor));
+				
+				if (SPECULAR)
+				{
+					var ref			: SValue	= getReflectedVector(lightVec, normal);
+					var halfVector	: SValue	= interpolate(_halfVector);
+					var shininess	: SValue	= power(max(dotProduct3(ref, halfVector), 0.),
+													  	LIGHT_SHININESS);
+					
+					illumination.incrementBy(shininess.multiply(LIGHT_SPECULAR));
+				}
 			}
 			
-			var diffuse : SValue = multiply(diffuseMaterial, illumination);
+			diffuse.scaleBy(illumination);
 			
 			// atmosphere
 			if (ATMOSPHERE)
 			{
-				var atmosphere	: SValue	= negate(dotProduct3(interpolate(vertexNormal), cameraLocalDirection));
+				var atmosphere	: SValue	= negate(dotProduct3(interpolate(vertexNormal),
+																 cameraLocalDirection));
 				
 				atmosphere = subtract(1.4, atmosphere).pow(4.);
 				atmosphere.scaleBy(new Vector4(.6, .9, 1.));
@@ -112,7 +106,7 @@ package effect
 				diffuse.incrementBy(atmosphere);
 			}
 			
-			return diffuse;
+			return float4(diffuse, 1.);
 		}
 	}
 }

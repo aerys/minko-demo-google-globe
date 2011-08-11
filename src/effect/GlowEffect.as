@@ -1,11 +1,11 @@
 package effect
 {
+	import aerys.minko.render.effect.SinglePassEffect;
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.scene.data.LocalData;
 	import aerys.minko.scene.data.StyleStack;
-	import aerys.minko.scene.data.ViewportData;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
@@ -37,8 +37,7 @@ package effect
 			
 			state.triangleCulling = TriangleCulling.FRONT;
 			state.priority = 0.;
-			state.renderTarget = (world[ViewportData] as ViewportData).renderTarget;
-			
+						
 			return true;
 		}
 		

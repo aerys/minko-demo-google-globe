@@ -32,6 +32,7 @@ package scene
 			
 			diffuse.styleProperty = BasicStyle.DIFFUSE;
 			normal.styleProperty = BasicStyle.NORMAL_MAP;
+			
 			eg.effect = new EarthEffect();
 	
 			super(eg);
