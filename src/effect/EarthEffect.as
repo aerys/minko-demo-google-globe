@@ -96,7 +96,7 @@ package effect
 				var shininess	: SValue	= power(max(dotProduct3(ref, halfVector), 0.0),
 												  	LIGHT_SHININESS);
 
-				illumination.increment(shininess.multiply(LIGHT_SPECULAR));
+				illumination.incrementBy(shininess.multiply(LIGHT_SPECULAR));
 			}
 			
 			var diffuse : SValue = multiply(diffuseMaterial, illumination);
@@ -109,7 +109,7 @@ package effect
 				atmosphere = subtract(1.4, atmosphere).pow(4.);
 				atmosphere.scaleBy(new Vector4(.6, .9, 1.));
 				
-				diffuse.increment(atmosphere);
+				diffuse.incrementBy(atmosphere);
 			}
 			
 			return diffuse;
