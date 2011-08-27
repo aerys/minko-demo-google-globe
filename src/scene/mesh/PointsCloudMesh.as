@@ -44,6 +44,7 @@ package scene.mesh
 			var theta		: Number			= (180. - lng) * Math.PI / 180.;
 			var radius		: int				= 100;
 			var vertices 	: VertexIterator 	= new VertexIterator(stream, indexStream);
+			var data		: Vector.<Number>	= new Vector.<Number>();
 			
 			transform.appendScale(.35, .35, size || .1)
 					 .appendTranslation(radius * Math.sin(phi) * Math.cos(theta),
@@ -57,12 +58,12 @@ package scene.mesh
 			for (var i : int = 0; i < 8; ++i)
 			{
 				// fast but unclear
-				stream.push(TMP_VERTICES[int(i * 3)],
-							TMP_VERTICES[int(i * 3 + 1)],
-							TMP_VERTICES[int(i * 3 + 2)],
-							((color >> 16) & 0xff) / 255.,
-							((color >> 8) & 0xff) / 255.,
-							(color & 0xff) / 255.);
+				data.push(TMP_VERTICES[int(i * 3)],
+						  TMP_VERTICES[int(i * 3 + 1)],
+						  TMP_VERTICES[int(i * 3 + 2)],
+						  ((color >> 16) & 0xff) / 255.,
+						  ((color >> 8) & 0xff) / 255.,
+						  (color & 0xff) / 255.);
 				
 				// slow but convenient
 				/*var vertex : VertexReference = new VertexReference(stream);
@@ -74,6 +75,8 @@ package scene.mesh
 				vertex.g = ((color >> 8) & 0xff) / 255.;
 				vertex.b = (color & 0xff) / 255.;*/
 			}
+			
+			stream.push(data);
 			
 			indexStream.pushIndices(INDICES, _numPoints * 8);
 			

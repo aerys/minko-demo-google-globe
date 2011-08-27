@@ -1,8 +1,8 @@
 package scene
 {
 	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.scene.node.group.LoaderGroup;
 	import aerys.minko.scene.node.group.EffectGroup;
+	import aerys.minko.scene.node.group.LoaderGroup;
 	import aerys.minko.scene.node.group.TransformGroup;
 	import aerys.minko.scene.node.mesh.IMesh;
 	import aerys.minko.scene.node.mesh.modifier.TangentSpaceMeshModifier;
@@ -13,25 +13,17 @@ package scene
 	
 	public class Earth extends TransformGroup
 	{
-//		[Embed("../assets/world_diffuse.jpg")]
-		[Embed("../assets/world_diffuse_2.jpg")]
+		[Embed("../assets/world_diffuse.jpg")]
+//		[Embed("../assets/world_diffuse_2.jpg")]
 		private static const ASSET_WORLD_DIFFUSE	: Class;
-//		[Embed("../assets/world_normal_test.jpg")]
-		[Embed("../assets/world_normal.jpg")]
-//		[Embed("../assets/world_normal_2.jpg")]
-		private static const ASSET_WORLD_NORMAL 	: Class;
 
 		private static const DEFAULT_SCALE	: Number	= 200.;
 		
 		public function Earth(scale : Number = DEFAULT_SCALE)
 		{
 			var diffuse : BitmapTexture	= LoaderGroup.loadClass(ASSET_WORLD_DIFFUSE)[0];
-			var normal	: BitmapTexture	= LoaderGroup.loadClass(ASSET_WORLD_NORMAL)[0];
 			var mesh	: IMesh			= new TangentSpaceMeshModifier(new SphereMesh(40));
-			var eg		: EffectGroup	= new EffectGroup(diffuse, normal, mesh);
-			
-			diffuse.styleProperty = BasicStyle.DIFFUSE;
-			normal.styleProperty = BasicStyle.NORMAL_MAP;
+			var eg		: EffectGroup	= new EffectGroup(diffuse, mesh);
 			
 			eg.effect = new EarthEffect();
 	

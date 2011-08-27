@@ -65,7 +65,7 @@ package
 																   0x7f3f98, 0xf26522, 0x2bb673, 0xd7df23, 0xe6b23a,
 																   0x7ed3f7];
 		
-		private var _viewport		: Viewport			= new Viewport(0., 0., true, 2);
+		private var _viewport		: Viewport			= new Viewport(2);
 		private var _camera			: ArcBallCamera		= new ArcBallCamera();
 		private var _globe			: Globe				= new Globe();
 		private var _scene			: Group				= new Group(_camera,
@@ -91,7 +91,7 @@ package
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, initialize);
 			
-			initializeMonitor();
+//			initializeMonitor();
 			initializeUI();
 			initializeScene();
 			

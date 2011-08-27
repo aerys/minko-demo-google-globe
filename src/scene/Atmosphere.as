@@ -14,7 +14,7 @@ package scene
 			super(new SphereMesh(40, 40, true));
 			
 			transform.appendUniformScale(DEFAULT_SCALE);
-			effect = new GlowEffect(0.15, .6, .9, 1.);
+			effect = new GlowEffect(0.15);
 		}
 	}
 }
