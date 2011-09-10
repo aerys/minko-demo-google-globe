@@ -2,7 +2,7 @@ package scene.mesh
 {
 	import aerys.minko.scene.node.mesh.Mesh;
 	import aerys.minko.type.math.ConstVector4;
-	import aerys.minko.type.math.Transform3D;
+	import aerys.minko.type.math.Matrix3D;
 	import aerys.minko.type.stream.IndexStream;
 	import aerys.minko.type.stream.VertexStream;
 	import aerys.minko.type.stream.VertexStreamList;
@@ -29,7 +29,7 @@ package scene.mesh
 		
 		public function PointsCloudMesh()
 		{
-			super(new VertexStreamList(new VertexStream(new Vector.<Number>(), FORMAT)),
+			super(new VertexStream(new Vector.<Number>(), FORMAT),
 				  new IndexStream(null, 0));
 		}
 		
@@ -38,12 +38,11 @@ package scene.mesh
 								 size	: Number,
 								 color 	: uint) : void
 		{
-			var stream 		: VertexStream	 	= vertexStream.getSubStreamById(0);
-			var transform	: Transform3D		= new Transform3D();
+			var transform	: Matrix3D			= new Matrix3D();
 			var phi			: Number			= (90. - lat) * Math.PI / 180.;
 			var theta		: Number			= (180. - lng) * Math.PI / 180.;
 			var radius		: int				= 100;
-			var vertices 	: VertexIterator 	= new VertexIterator(stream, indexStream);
+			var vertices 	: VertexIterator 	= new VertexIterator(vertexStream, indexStream);
 			var data		: Vector.<Number>	= new Vector.<Number>();
 			
 			transform.appendScale(.35, .35, size || .1)
@@ -53,7 +52,7 @@ package scene.mesh
 					 .pointAt(ConstVector4.ZERO);
 			
 			TMP_VERTICES.length = 0;
-			transform.multiplyRawVectors(VERTICES, TMP_VERTICES);
+			transform.transformRawVectors(VERTICES, TMP_VERTICES);
 			
 			for (var i : int = 0; i < 8; ++i)
 			{
@@ -66,7 +65,7 @@ package scene.mesh
 						  (color & 0xff) / 255.);
 				
 				// slow but convenient
-				/*var vertex : VertexReference = new VertexReference(stream);
+				/*var vertex : VertexReference = new VertexReference(stream); 
 				
 				vertex.x = TMP_VERTICES[int(i * 3)];
 				vertex.y = TMP_VERTICES[int(i * 3 + 1)];
@@ -76,9 +75,9 @@ package scene.mesh
 				vertex.b = (color & 0xff) / 255.;*/
 			}
 			
-			stream.push(data);
+			(vertexStream as VertexStream).push(data);
 			
-			indexStream.pushIndices(INDICES, _numPoints * 8);
+			indexStream.push(INDICES, _numPoints * 8);
 			
 			++_numPoints;
 		}

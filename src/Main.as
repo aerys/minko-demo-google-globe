@@ -104,8 +104,8 @@ package
 			_viewport.defaultEffect = null;
 			stage.addChild(_viewport);
 			
-			loadPopulationData();
-			//loadSearchData();
+//			loadPopulationData();
+			loadSearchData();
 			
 			_camera.distance = MIN_ZOOM;
 			_camera.farClipping = 11000;
