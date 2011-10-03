@@ -5,7 +5,7 @@ package effect
 	import aerys.minko.render.renderer.state.RendererState;
 	import aerys.minko.render.renderer.state.TriangleCulling;
 	import aerys.minko.render.shader.SValue;
-	import aerys.minko.scene.data.LocalData;
+	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.StyleStack;
 	import aerys.minko.type.math.Vector4;
 	
@@ -29,12 +29,12 @@ package effect
 			_color = new Vector4(red, green, blue, alpha);
 		}
 		
-		override public function fillRenderState(state	: RendererState,
-						 						 style	: StyleStack, 
-												 local	: LocalData,
-												 world	: Dictionary) : Boolean
+		override public function fillRenderState(state		: RendererState,
+						 						 style		: StyleStack, 
+												 transform	: TransformData,
+												 world		: Dictionary) : Boolean
 		{
-			super.fillRenderState(state, style, local, world);
+			super.fillRenderState(state, style, transform, world);
 			
 			state.triangleCulling = TriangleCulling.FRONT;
 			state.blending = Blending.ALPHA;
