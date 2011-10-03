@@ -1,6 +1,5 @@
 package
 {
-	import aerys.minko.Minko;
 	import aerys.minko.render.Viewport;
 	import aerys.minko.scene.node.camera.ArcBallCamera;
 	import aerys.minko.scene.node.group.Group;
@@ -22,20 +21,18 @@ package
 	import scene.Earth;
 	import scene.Globe;
 	
-//	[SWF(width=800,height=600)]
-	
 	public class Main extends Sprite
 	{
-		/*[Embed("../assets/stars.jpg")]
-		private static const ASSET_STARS_DIFFUSE	: Class;
-		[Embed("../assets/stars_layer.jpg")]
-		private static const ASSET_STARS_LAYER		: Class;*/
-		/*[Embed("../assets/search.json",mimeType="application/octet-stream")]
-		private static const ASSET_SEARCH_JSON		: Class;*/
+		// [Embed("../assets/stars.jpg")]
+		// private static const ASSET_STARS_DIFFUSE	: Class;
+		// [Embed("../assets/stars_layer.jpg")]
+		// private static const ASSET_STARS_LAYER		: Class;
+		// [Embed("../assets/search.json",mimeType="application/octet-stream")]
+		// private static const ASSET_SEARCH_JSON		: Class;
+		// [Embed("../assets/population2000.json",mimeType="application/octet-stream")]
+		// private static const ASSET_POPULATION_JSON	: Class;
 		[Embed("../assets/search.qark",mimeType="application/octet-stream")]
 		private static const ASSET_SEARCH_QARK		: Class;
-		/*[Embed("../assets/population2000.json",mimeType="application/octet-stream")]
-		private static const ASSET_POPULATION_JSON	: Class;*/
 		[Embed("../assets/population2000.qark",mimeType="application/octet-stream")]
 		private static const ASSET_POPULATION_QARK	: Class;
 
@@ -77,7 +74,7 @@ package
 			removeEventListener(Event.ADDED_TO_STAGE, initialize);
 			
 			initializeMonitor();
-//			initializeUI();
+			// initializeUI();
 			initializeScene();
 			
 			stage.frameRate = 30.;
@@ -89,7 +86,8 @@ package
 			_viewport.defaultEffect = null;
 			stage.addChild(_viewport);
 			
-//			loadPopulationData();
+			// switch here to change dataset
+			// loadPopulationData();
 			loadSearchData();
 			
 			_camera.distance = MIN_ZOOM;
