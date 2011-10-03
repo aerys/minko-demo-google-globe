@@ -2,23 +2,8 @@ package
 {
 	import aerys.minko.Minko;
 	import aerys.minko.render.Viewport;
-	import aerys.minko.render.effect.basic.BasicEffect;
-	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.renderer.DefaultRenderer;
-	import aerys.minko.render.renderer.DirectRenderer;
-	import aerys.minko.render.renderer.state.Blending;
-	import aerys.minko.render.renderer.state.TriangleCulling;
-	import aerys.minko.scene.node.Model;
 	import aerys.minko.scene.node.camera.ArcBallCamera;
 	import aerys.minko.scene.node.group.Group;
-	import aerys.minko.scene.node.group.LoaderGroup;
-	import aerys.minko.scene.node.group.StyleGroup;
-	import aerys.minko.scene.node.group.TransformGroup;
-	import aerys.minko.scene.node.mesh.primitive.CubeMesh;
-	import aerys.minko.scene.node.mesh.primitive.SphereMesh;
-	import aerys.minko.scene.node.texture.ITexture;
-	import aerys.minko.type.log.DebugLevel;
-	import aerys.minko.type.math.ConstVector4;
 	import aerys.minko.type.math.Vector4;
 	import aerys.monitor.Monitor;
 	import aerys.qark.Qark;
@@ -91,11 +76,11 @@ package
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, initialize);
 			
-//			initializeMonitor();
-			initializeUI();
+			initializeMonitor();
+//			initializeUI();
 			initializeScene();
 			
-			stage.frameRate = 60.;
+			stage.frameRate = 30.;
 			stage.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
 		}
 		

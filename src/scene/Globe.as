@@ -14,9 +14,7 @@ package scene
 		
 		public function Globe()
 		{
-			super();
-			
-			effect = new BasicEffect();
+			super(new BasicEffect());
 		}
 		
 		public function addPoint(latitude	: Number,

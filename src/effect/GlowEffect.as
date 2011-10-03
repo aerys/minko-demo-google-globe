@@ -1,21 +1,18 @@
 package effect
 {
+	import aerys.minko.render.effect.IRenderingEffect;
 	import aerys.minko.render.effect.SinglePassEffect;
-	import aerys.minko.render.renderer.state.Blending;
-	import aerys.minko.render.renderer.state.RendererState;
-	import aerys.minko.render.renderer.state.TriangleCulling;
-	import aerys.minko.render.shader.SValue;
+	import aerys.minko.render.renderer.RendererState;
+	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
-	import aerys.minko.scene.data.StyleStack;
-	import aerys.minko.type.math.Vector4;
+	import aerys.minko.type.enum.Blending;
+	import aerys.minko.type.enum.TriangleCulling;
 	
 	import flash.utils.Dictionary;
 	
 	
-	public class GlowEffect extends SinglePassEffect
+	public class GlowEffect extends SinglePassEffect implements IRenderingEffect
 	{
-		private var _color	: Vector4	= null;
-		private var _blur	: Number	= 0.;
 		
 		public function GlowEffect(blur		: Number	= 0.165,
 								   red		: Number	= 1.,
@@ -23,14 +20,11 @@ package effect
 								   blue		: Number	= 1.,
 								   alpha	: Number	= 1.)
 		{
-			super();
-			
-			_blur = blur;
-			_color = new Vector4(red, green, blue, alpha);
+			super(new GlowShader(blur, red, green, blue, alpha));
 		}
 		
 		override public function fillRenderState(state		: RendererState,
-						 						 style		: StyleStack, 
+						 						 style		: StyleData, 
 												 transform	: TransformData,
 												 world		: Dictionary) : Boolean
 		{
@@ -43,21 +37,5 @@ package effect
 			return true;
 		}
 		
-		override protected function getOutputPosition() : SValue
-		{
-			var pos	: SValue	= vertexPosition.multiply4x4(localToViewMatrix);
-			
-			pos.scaleBy(float3(1. + _blur, 1. + _blur, 1.));
-			
-			return pos.multiply4x4(projectionMatrix);
-		}
-		
-		override protected function getOutputColor() : SValue
-		{
-			var normal 	: SValue	= interpolate(vertexNormal);
-			var angle 	: SValue 	= negate(normal.dotProduct3(cameraLocalDirection));
-			
-			return multiply(_color, power(subtract(0.8, angle), 12.0));
-		}
 	}
 }

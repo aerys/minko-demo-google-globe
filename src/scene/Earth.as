@@ -23,10 +23,8 @@ package scene
 		{
 			var diffuse : BitmapTexture	= LoaderGroup.loadClass(ASSET_WORLD_DIFFUSE)[0];
 			var mesh	: IMesh			= new TangentSpaceMeshModifier(new SphereMesh(40));
-			var eg		: EffectGroup	= new EffectGroup(diffuse, mesh);
+			var eg		: EffectGroup	= new EffectGroup(new EarthEffect(), diffuse, mesh);
 			
-			eg.effect = new EarthEffect();
-	
 			super(eg);
 			
 			transform.appendUniformScale(scale);

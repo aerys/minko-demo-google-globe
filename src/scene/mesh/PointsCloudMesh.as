@@ -2,7 +2,7 @@ package scene.mesh
 {
 	import aerys.minko.scene.node.mesh.Mesh;
 	import aerys.minko.type.math.ConstVector4;
-	import aerys.minko.type.math.Matrix3D;
+	import aerys.minko.type.math.Matrix4x4;
 	import aerys.minko.type.stream.IndexStream;
 	import aerys.minko.type.stream.VertexStream;
 	import aerys.minko.type.stream.VertexStreamList;
@@ -38,7 +38,7 @@ package scene.mesh
 								 size	: Number,
 								 color 	: uint) : void
 		{
-			var transform	: Matrix3D			= new Matrix3D();
+			var transform	: Matrix4x4			= new Matrix4x4();
 			var phi			: Number			= (90. - lat) * Math.PI / 180.;
 			var theta		: Number			= (180. - lng) * Math.PI / 180.;
 			var radius		: int				= 100;
