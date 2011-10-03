@@ -18,4 +18,4 @@ Dependencies
 Contribute
 ----------
 
-`minko-demo-google-globe` is GPL-licensed.  Make sure you tell us everything that's wrong!
+`minko-demo-google-globe` is LGPL-licensed.  Make sure you tell us everything that's wrong!
